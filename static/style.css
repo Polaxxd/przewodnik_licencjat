@@ -1,0 +1,51 @@
+.navbar-brand{
+  font-size: 25px !important;
+}
+
+.text-turquoise {
+  --bs-text-opacity: 1;
+  color: #00FAEB !important;
+}
+
+.text-black {
+  color: #000000 !important;
+}
+
+.lead {
+  font-weight: 450 !important;
+}
+
+.bg-black {
+  background-color: black;
+}
+
+.bg-turquoise {
+  background-image: linear-gradient(#00FAEB, #ffff);
+}
+
+.bg-total_turquoise {
+  background-color: #00FAEB;
+}
+
+.btn-turquoise {
+  color: black;
+  background-color: #00FAEB;
+}
+
+.btn-my_default {
+  color: white;
+  background-color: #006600;
+}
+
+.card-body_letter {
+  height: 210px !important;
+}
+
+ul.lead {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/*.btn-turquoise a:hover{*/
+/*  background-color: lightgrey;*/
+/*}*/
