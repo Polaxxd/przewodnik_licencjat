@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import render_template
 from flask import flash
+from flask import request
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
@@ -101,6 +102,37 @@ def add_user():
         form=form,
         name=name,
         our_users=our_users)
+
+@app.route('/uzytkownik/<int:id>', methods=['GET', 'POST'])
+def update(id):
+    form = UserForm()
+    name_to_update = Users.query.get_or_404(id)
+    edited = None
+    if request.method == "POST":
+        user = Users.query.filter_by(nick=form.nick.data).first()
+        if user == name_to_update.nick:
+            user=None
+        if user is None:
+            name_to_update.name = request.form['name']
+            name_to_update.nick = request.form['nick']
+            try:
+                db.session.commit()
+                flash("Zmieniono dane.")
+                edited = "tak"
+                return render_template("edytuj.htm",
+                                       form = form,
+                                       name_to_update = name_to_update)
+            except:
+                flash("Wystąpił błąd, spróbuj ponownie.")
+                return render_template("edytuj.htm",
+                                       form=form,
+                                       name_to_update=name_to_update)
+        else:
+            flash("Użytkownik o tym nicku już istnieje. Wybierz inną nazwę użytkownika.")
+    else:
+        return render_template("edytuj.htm",
+                                form=form,
+                                name_to_update=name_to_update)
 
 
 @app.errorhandler(404)
