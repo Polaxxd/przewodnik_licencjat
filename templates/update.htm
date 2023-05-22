@@ -78,15 +78,16 @@
 
 {% else %}
 <div class="shadow p-3 mb-5 bg-body rounded">
-	<form action="{{ url_for('update', id=name_to_update.id) }}" method="POST">
+	<form action="{{ url_for('update', id=user_to_update.id) }}" method="POST">
 		{{ form.hidden_tag() }}
 		{{ form.name.label(class="form-label") }}
-		{{ form.name(class="form-control", value=name_to_update.name) }}
+		{{ form.name(class="form-control", value=user_to_update.name) }}
 		<br/>
 		{{ form.nick.label(class="form-label") }}
-		{{ form.nick(class="form-control", value=name_to_update.nick) }}
+		{{ form.nick(class="form-control", value=user_to_update.nick) }}
 		<br/>
-		{{ form.submit(class="btn btn-secondary") }}
+		{{ form.submit(class="btn btn-success") }}
+        <a href="{{ url_for('delete', id=id) }}" class="btn btn-danger">Usuń</a>
 	</form>
 </div>
 
