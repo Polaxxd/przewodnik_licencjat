@@ -144,8 +144,7 @@ def logout():
 @app.route('/panel_uzytkownika')
 @login_required
 def dashboard():
-    user_name = "pola"
-    return render_template('name.htm', user_name=user_name)
+    return render_template('name.htm')
 
 @app.route('/uzytkownik', methods=['GET', 'POST'])
 def name():

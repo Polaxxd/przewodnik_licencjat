@@ -43,9 +43,20 @@
         <div class="container">
             <div class="d-sm-flex">
                 <div class="mx-4">
-                    <h1>Przewodnik po świecie <span class="text-turquoise">ciszy</span> </h1>
-                    <div class="container ">
-                        <h1>Hello {{ user_name|title }}</h1>
+                    <div class="container">
+                        <div class="card bg-info text-light">
+                            <div class="card-header">Cześć {{ current_user.name }}!
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">Dane użytkownika:</h5>
+                                <p class="card-text">
+                                    <strong>Imię: </strong>{{ current_user.name }}<br>
+                                    <strong>Nick: </strong>{{ current_user.nick }}<br>
+                                    <strong>Data dołączenia: </strong>{{ current_user.date_added }}<br>
+                                </p>
+                            </div>
+                        </div>
+                        <br>
                         <a href="{{ url_for('logout') }}" class="btn btn-secondary">Wyloguj</a>
                     </div>
                 </div>
@@ -55,17 +66,14 @@
     </section>
 
     <!-- podstrony -->
-    <section class=" p-5 bg-turquoise text-light text-center">
+    <section class=" p-5 bg-turquoise">
         <div class="container">
             {% for message in get_flashed_messages() %}
-
-	<div class="alert alert-success alert-dismissible fade show" role="alert">
-	  {{ message }}
-	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-	</div>
-
-
-{% endfor %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
 
 
         </div>
