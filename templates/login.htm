@@ -45,8 +45,7 @@
                 <div class="mx-4">
                     <h1>Przewodnik po świecie <span class="text-turquoise">ciszy</span> </h1>
                     <div class="container ">
-                        <h1>Hello {{ user_name|title }}</h1>
-                        <a href="{{ url_for('logout') }}" class="btn btn-secondary">Wyloguj</a>
+                        <h1>Logowanie</h1>
                     </div>
                 </div>
                 <img id="motyl" class="img-fluid w-25" src="/20_palonek/przewodnik/static/images/motyl.png" alt="Logo motyla w kolorach białym i turkusowym">
@@ -55,19 +54,27 @@
     </section>
 
     <!-- podstrony -->
-    <section class=" p-5 bg-turquoise text-light text-center">
+    <section class=" p-5 bg-turquoise">
         <div class="container">
             {% for message in get_flashed_messages() %}
-
-	<div class="alert alert-success alert-dismissible fade show" role="alert">
-	  {{ message }}
-	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-	</div>
-
-
-{% endfor %}
-
-
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+            <div class="shadow p-3 mb-5 bg-body rounded">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    {{ form.nick.label(class="form-label") }}
+                    {{ form.nick(class="form-control") }}
+                    <br/>
+                    {{ form.password.label(class="form-label") }}
+                    {{ form.password(class="form-control") }}
+                    <br/>
+                    <br/>
+                    {{ form.submit(class="btn btn-success") }}
+                </form>
+            </div>
         </div>
     </section>
 

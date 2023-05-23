@@ -1,10 +1,12 @@
 from flask import Flask
-from flask import render_template
+from flask import render_template, redirect
 from flask import flash
 from flask import request
+from flask import url_for
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, IntegerField, ValidationError
 from wtforms.validators import DataRequired, EqualTo, Length
+from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -21,10 +23,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://20_palonek:polap1103@12
 # Initialize The Database
 db.init_app(app)
 
-# Create Model
-class Users(db.Model):
+# Create Model for Users
+class Users(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(200), nullable=False)
+    name = db.Column(db.String(200), nullable=False, unique=True)
     nick = db.Column(db.String(120), nullable=False, unique=True)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     # Passwords
@@ -46,6 +48,25 @@ class Users(db.Model):
         return '<Name %r>' % self.name
 
 
+# Create Model for Quiz
+class Quiz(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    question_text = db.Column(db.String(255), nullable=False)
+    option1 = db.Column(db.String(255), nullable=False)
+    option2 = db.Column(db.String(255), nullable=False)
+    option3 = db.Column(db.String(255))
+    option4 = db.Column(db.String(255))
+    correct_answer = db.Column(db.Integer, nullable=False)
+
+# Flask Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+@login_manager.user_loader
+def load_user(user_id):
+    return Users.query.get(int(user_id))
+
+
 ################## FORMS #####################
 # Create a Form Class to add and update users
 class UserForm(FlaskForm):
@@ -55,10 +76,26 @@ class UserForm(FlaskForm):
     password_hash2 = PasswordField('Powtórz hasło', validators=[DataRequired()])
     submit = SubmitField("Zapisz")
 
-# Create a Form Class
+# Create a Name Form Class
 class NamerForm(FlaskForm):
-    Nname = StringField("What's Your Name", validators=[DataRequired()])
-    submit = SubmitField("Submit")
+    Nname = StringField("Imię", validators=[DataRequired()])
+    submit = SubmitField("Prześlij")
+
+# Create a Login Form
+class LoginForm(FlaskForm):
+    nick = StringField("Nick", validators=[DataRequired()])
+    password = PasswordField("Hasło", validators=[DataRequired()])
+    submit = SubmitField("Zaloguj")
+
+# Create a Form Class to add quiz questions
+class QuizForm(FlaskForm):
+    question_text = StringField("Pytanie", validators=[DataRequired()])
+    option1 = StringField("Odpowiedź 1", validators=[DataRequired()])
+    option2 = StringField("Odpowiedź 2", validators=[DataRequired()])
+    option3 = StringField("Odpowiedź 3")
+    option4 = StringField("Odpowiedź 4")
+    correct_answer = IntegerField("Prawidłowa odpowiedź", validators=[DataRequired()])
+    submit = SubmitField("Zapisz")
 
 @app.route('/')
 def home():
@@ -80,9 +117,35 @@ def daktylografia_teoria():
 def o_serwisie():
     return render_template('o_serwisie.htm')
 
-@app.route('/logowanie')
+@app.route('/logowanie', methods=['GET', 'POST'])
 def login():
-    return render_template('user.htm')
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = Users.query.filter_by(nick=form.nick.data).first()
+        if user:
+            # check the hash
+            if check_password_hash(user.password_hash, form.password.data):
+                login_user(user)
+                flash("Zalogowano!")
+                return redirect(url_for('dashboard'))
+            else:
+                flash("Błędne hasło!")
+        else:
+            flash("Brak użytkownika.")
+    return render_template('login.htm', form=form)
+
+@app.route('/wyloguj', methods=['GET', 'POST'])
+@login_required
+def logout():
+    logout_user()
+    flash("Wylogowano.")
+    return redirect(url_for('login'))
+
+@app.route('/panel_uzytkownika')
+@login_required
+def dashboard():
+    user_name = "pola"
+    return render_template('name.htm', user_name=user_name)
 
 @app.route('/uzytkownik', methods=['GET', 'POST'])
 def name():
@@ -177,7 +240,36 @@ def delete(id):
         our_users = Users.query.order_by(Users.date_added)
         return render_template("add_user.htm", form=form, name=name, our_users=our_users)
 
+@app.route('/quiz/dodaj', methods=['GET', 'POST'])
+def add_question():
+    added = None
+    form = QuizForm()
+    if form.validate_on_submit():
+        quiz = Quiz(
+            question_text=form.question_text.data,
+            option1=form.option1.data,
+            option2=form.option2.data,
+            option3=form.option3.data,
+            option4=form.option4.data,
+            correct_answer=form.correct_answer.data
+        )
+        db.session.add(quiz)
+        db.session.commit()
+        flash("Dodano pytanie")
+        added = "tak"
 
+        form.question_text.data = ''
+        form.option1.data = ''
+        form.option2.data = ''
+        form.option3.data = ''
+        form.option4.data = ''
+        form.correct_answer.data = ''
+
+    my_questions = Quiz.query.order_by(Quiz.id.desc()).all()
+    return render_template("quiz_adding.htm",
+                           form=form,
+                           added=added,
+                           my_questions=my_questions)
 
 @app.errorhandler(404)
 def page_not_found(e):
