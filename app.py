@@ -196,7 +196,7 @@ def update(id):
     edited = None
     if request.method == "POST":
         user = Users.query.filter_by(nick=form.nick.data).first()
-        if user == user_to_update.nick:
+        if user.nick == form.nick.data:
             user=None
         if user is None:
             user_to_update.name = request.form['name']
@@ -265,11 +265,47 @@ def add_question():
         form.option4.data = ''
         form.correct_answer.data = ''
 
-    my_questions = Quiz.query.order_by(Quiz.id.desc()).all()
+    my_questions = Quiz.query.order_by(Quiz.id.asc()).all()
     return render_template("quiz_adding.htm",
                            form=form,
                            added=added,
                            my_questions=my_questions)
+
+@app.route('/quiz/edytuj/<int:id>', methods=['GET', 'POST'])
+def update_question(id):
+    form = QuizForm()
+    question_to_update = Quiz.query.get_or_404(id)
+    my_questions = Quiz.query.order_by(Quiz.id.asc()).all()
+    edited = None
+    if request.method == "POST":
+        question_to_update.question_text = request.form['question_text']
+        question_to_update.option1 = request.form['option1']
+        question_to_update.option2 = request.form['option2']
+        question_to_update.option3 = request.form['option3']
+        question_to_update.option4 = request.form['option4']
+        question_to_update.correct_answer = request.form['correct_answer']
+        try:
+            db.session.commit()
+            flash("Zmieniono dane.")
+            edited = "tak"
+            return render_template("quiz_adding.htm",
+                                   form=form,
+                                   my_questions=my_questions,
+                                   edited=edited
+                                   )
+        except:
+            flash("Wystąpił błąd, spróbuj ponownie.")
+            return render_template("quiz_update.htm",
+                                   form=form,
+                                   question_to_update=question_to_update,
+                                   id=id)
+
+    else:
+        return render_template("quiz_update.htm",
+                               form=form,
+                               question_to_update=question_to_update,
+                               id=id)
+
 
 @app.errorhandler(404)
 def page_not_found(e):
