@@ -58,6 +58,8 @@
                         </div>
                         <br>
                         <a href="{{ url_for('logout') }}" class="btn btn-secondary">Wyloguj</a>
+                        <a href="{{ url_for('update', id=current_user.id) }}" class="btn btn-warning"> Edytuj</a>
+                        <a href="{{ url_for('delete', id=current_user.id) }}" class="btn btn-danger"> Usuń</a>
                     </div>
                 </div>
                 <img id="motyl" class="img-fluid w-25" src="/20_palonek/przewodnik/static/images/motyl.png" alt="Logo motyla w kolorach białym i turkusowym">

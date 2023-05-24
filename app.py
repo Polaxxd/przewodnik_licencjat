@@ -8,11 +8,14 @@ from wtforms import StringField, SubmitField, PasswordField, BooleanField, Integ
 from wtforms.validators import DataRequired, EqualTo, Length
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 
+
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_migrate import Migrate
 
 from werkzeug.security import generate_password_hash, check_password_hash
+
+#from babel import Babel
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "przewodnik_pola"
@@ -22,6 +25,11 @@ migrate = Migrate(app, db)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://20_palonek:polap1103@127.0.0.1/20_palonek'
 # Initialize The Database
 db.init_app(app)
+
+# babel = Babel(app)
+# @babel.localeselector
+# def get_locale():
+#     return 'pl'
 
 # Create Model for Users
 class Users(db.Model, UserMixin):
@@ -144,7 +152,7 @@ def logout():
 @app.route('/panel_uzytkownika')
 @login_required
 def dashboard():
-    return render_template('name.htm')
+    return render_template('dashboard.htm')
 
 @app.route('/uzytkownik', methods=['GET', 'POST'])
 def name():
@@ -157,7 +165,7 @@ def name():
         flash("Form Submitted Successfully!")
 
 
-    return render_template("name.htm",
+    return render_template("dashboard.htm",
                            Nname=Nname,
                            Nform=Nform)
 

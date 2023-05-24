@@ -1,0 +1,2 @@
+msgid "Please log in to access this page."
+msgstr "Należy się zalogować, aby uzyskać dostęp do tej strony."
