@@ -3,13 +3,11 @@ from flask import render_template, redirect
 from flask import flash
 from flask import request
 from flask import url_for
-
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, IntegerField, ValidationError
 from wtforms.validators import DataRequired, EqualTo, Length
-from forms import UserForm, NamerForm, LoginForm, QuizForm
-
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
+
 
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -77,6 +75,35 @@ def load_user(user_id):
     return Users.query.get(int(user_id))
 
 
+################## FORMS #####################
+# Create a Form Class to add and update users
+class UserForm(FlaskForm):
+    name = StringField("Imię", validators=[DataRequired()])
+    nick = StringField("Nick", validators=[DataRequired()])
+    password_hash = PasswordField('Hasło', validators=[DataRequired(), EqualTo('password_hash2', message="Hasła muszą być takie same!")])
+    password_hash2 = PasswordField('Powtórz hasło', validators=[DataRequired()])
+    submit = SubmitField("Zapisz")
+
+# Create a Name Form Class
+class NamerForm(FlaskForm):
+    Nname = StringField("Imię", validators=[DataRequired()])
+    submit = SubmitField("Prześlij")
+
+# Create a Login Form
+class LoginForm(FlaskForm):
+    nick = StringField("Nick", validators=[DataRequired()])
+    password = PasswordField("Hasło", validators=[DataRequired()])
+    submit = SubmitField("Zaloguj")
+
+# Create a Form Class to add quiz questions
+class QuizForm(FlaskForm):
+    question_text = StringField("Pytanie", validators=[DataRequired()])
+    option1 = StringField("Odpowiedź 1", validators=[DataRequired()])
+    option2 = StringField("Odpowiedź 2", validators=[DataRequired()])
+    option3 = StringField("Odpowiedź 3")
+    option4 = StringField("Odpowiedź 4")
+    correct_answer = IntegerField("Prawidłowa odpowiedź", validators=[DataRequired()])
+    submit = SubmitField("Zapisz")
 
 @app.route('/')
 def home():
@@ -170,7 +197,6 @@ def add_user():
         our_users=our_users)
 
 @app.route('/uzytkownik/edytuj/<int:id>', methods=['GET', 'POST'])
-@login_required
 def update(id):
     form = UserForm()
     user_to_update = Users.query.get_or_404(id)

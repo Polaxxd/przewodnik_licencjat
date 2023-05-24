@@ -44,7 +44,7 @@
                 <div class="mx-4">
                     <h1>Przewodnik po świecie <span class="text-turquoise">ciszy</span> </h1>
                     <div class="container ">
-                        <h1>Lista użytkowników</h1>
+                        <h1>Edycja danych</h1>
                     </div>
                 </div>
                 <img id="motyl" class="img-fluid w-25" src="/20_palonek/przewodnik/static/images/motyl.png" alt="Logo motyla w kolorach białym i turkusowym">
@@ -54,6 +54,8 @@
 
     <!-- podstrony -->
     <section class=" p-5 bg-turquoise text-dark">
+    {% if id == current_user.id %}
+
         <div class="container">
             {% for message in get_flashed_messages() %}
             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -61,40 +63,27 @@
               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             {% endfor %}
-
-{% if edited %}
-	<h1>Pomyślnie zmieniono dane!</h1>
-	<br/><br/>
-<table class="table table-hover table-bordered table-striped">
-
-{% for our_user in our_users %}
-	<tr>
-	<td>{{ our_user.id }}. {{ our_user.name }} - {{ our_user.nick }}</td>
-	</tr>
-{% endfor %}
-
-</table>
-
-
-{% else %}
-<div class="shadow p-3 mb-5 bg-body rounded">
-	<form action="{{ url_for('update', id=user_to_update.id) }}" method="POST">
-		{{ form.hidden_tag() }}
-		{{ form.name.label(class="form-label") }}
-		{{ form.name(class="form-control", value=user_to_update.name) }}
-		<br/>
-		{{ form.nick.label(class="form-label") }}
-		{{ form.nick(class="form-control", value=user_to_update.nick) }}
-		<br/>
-		{{ form.submit(class="btn btn-success") }}
-        <a href="{{ url_for('delete', id=id) }}" class="btn btn-danger">Usuń</a>
-	</form>
-</div>
-
-
-{% endif %}
-
+            <div class="shadow p-3 mb-5 bg-body rounded">
+                <form action="{{ url_for('update', id=user_to_update.id) }}" method="POST">
+                    {{ form.hidden_tag() }}
+                    {{ form.name.label(class="form-label") }}
+                    {{ form.name(class="form-control", value=user_to_update.name) }}
+                    <br/>
+                    {{ form.nick.label(class="form-label") }}
+                    {{ form.nick(class="form-control", value=user_to_update.nick) }}
+                    <br/>
+                    {{ form.submit(class="btn btn-success") }}
+                    <a href="{{ url_for('delete', id=id) }}" class="btn btn-danger">Usuń</a>
+                </form>
+            </div>
         </div>
+
+    {% else %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+              Nie możesz edytować tego użytkownika.
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+    {% endif %}
     </section>
 
     <!-- footer -->
