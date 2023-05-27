@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, BooleanField, IntegerField, ValidationError
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, IntegerField, RadioField, ValidationError
 from wtforms.validators import DataRequired, EqualTo, Length
 
 
@@ -32,3 +32,13 @@ class QuizForm(FlaskForm):
     option4 = StringField("Odpowiedź 4")
     correct_answer = IntegerField("Prawidłowa odpowiedź", validators=[DataRequired()])
     submit = SubmitField("Zapisz")
+
+# Create a Form Class for quiz questions
+class QuestionForm(FlaskForm):
+    options = RadioField('Options: ', validators=[DataRequired()], default=1, coerce=str)
+    submit = SubmitField('Dalej')
+
+# Create a 2nd Form Class for quiz questions
+class Question2Form(FlaskForm):
+    user_answer = IntegerField("Twoja odpowiedź", validators=[DataRequired()])
+    submit = SubmitField('Dalej')

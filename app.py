@@ -7,7 +7,7 @@ from flask import url_for
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, IntegerField, ValidationError
 from wtforms.validators import DataRequired, EqualTo, Length
-from forms import UserForm, NamerForm, LoginForm, QuizForm
+from forms import UserForm, NamerForm, LoginForm, QuizForm, QuestionForm, Question2Form
 
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 
@@ -41,6 +41,7 @@ class Users(db.Model, UserMixin):
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     # Passwords
     password_hash = db.Column(db.String(128))
+    quiz_score = db.Column(db.Integer, default=0)
 
     @property
     def password(self):
@@ -67,6 +68,7 @@ class Quiz(db.Model):
     option3 = db.Column(db.String(255))
     option4 = db.Column(db.String(255))
     correct_answer = db.Column(db.Integer, nullable=False)
+
 
 # Flask Login
 login_manager = LoginManager()
@@ -221,6 +223,22 @@ def delete(id):
         our_users = Users.query.order_by(Users.date_added)
         return render_template("add_user.htm", form=form, name=name, our_users=our_users)
 
+# @app.route('/quiz', methods=['GET', 'POST'])
+# def quiz():
+#     if request.method == 'POST':
+#         questions = Quiz.query.all()
+#         score = 0
+#         for question in questions:
+#             user_answer = int(request.form.get(f'question_{question.id}'))
+#             question.user_answer = user_answer
+#             if user_answer == question.correct_answer:
+#                 score += 1
+#         db.session.commit()
+#         return render_template('quiz_result.html', score=score)
+#     else:
+#         questions = Quiz.query.all()
+#         return render_template('quiz.html', questions=questions)
+
 @app.route('/quiz/dodaj', methods=['GET', 'POST'])
 def add_question():
     added = None
@@ -287,6 +305,98 @@ def update_question(id):
                                question_to_update=question_to_update,
                                id=id)
 
+# @app.route('/question/<int:id>', methods=['GET', 'POST'])
+# @login_required
+# def question(id):
+#     form = QuestionForm()
+#     q = Quiz.query.filter_by(id=id).first()
+#     message_x = None
+#     message_y = "nie"
+#     if not q:
+#         return redirect(url_for('score'))
+#     form.options.choices = [('1', q.option1), ('2', q.option2), ('3', q.option3), ('4', q.option4)]
+#     if form.validate_on_submit():
+#         message_y = "tak"
+#         option = form.options.data
+#         if option == q.correct_answer:
+#             message_x = "poprawna odpowiedź"
+#             current_score = current_user.quiz_score
+#             current_score += 10
+#             current_user.quiz_score = current_score
+#         else:
+#             message_x = "niepoprawna odpowiedź"+ option + "," + str(q.correct_answer)
+#         return redirect(url_for('question', id=(id+1)))
+#     #form.options.choices = [('1', q.option1), ('2', q.option2), ('3', q.option3), ('4', q.option4)]
+#     return render_template('question.htm', form=form, q=q, title='Question {}'.format(id), message_x=message_x, message_y=message_y)
+
+@app.route('/pytanie/<int:id>', methods=['GET', 'POST'])
+@login_required
+def question(id):
+    form = QuestionForm()
+    q = Quiz.query.filter_by(id=id).first()
+    if id == 1:
+        if current_user.quiz_score > 0:
+            return redirect(url_for('score'))
+    if not q:
+        return redirect(url_for('score'))
+    if request.method == 'POST':
+        option = request.form['options']
+        if option == q.correct_answer:
+            current_score = current_user.quiz_score
+            current_score += 10
+            current_user.quiz_score = current_score
+            try:
+                db.session.commit()
+            except:
+                flash("Wystąpił błąd, spróbuj ponownie.")
+        return redirect(url_for('question', id=(id+1)))
+    form.options.choices = [('1', q.option1), ('2', q.option2), ('3', q.option3), ('4', q.option4)]
+    return render_template('question.htm', form=form, q=q, title='Question {}'.format(id))
+
+
+@app.route('/wynik_quizu')
+@login_required
+def score():
+    final_score = current_user.quiz_score
+    return render_template('score.htm', title='Final Score', score=final_score)
+
+@app.route('/quiz/odpowiedzi')
+@login_required
+def quiz_answers():
+    my_questions = Quiz.query.order_by(Quiz.id.asc()).all()
+    return render_template('quiz_answers.htm', my_questions=my_questions)
+
+# @app.route('/pytanie/<int:id>', methods=['GET', 'POST'])
+# def question2(id):
+#     message_z = "nic"
+#     current_score = 0
+#     form = Question2Form()
+#     q = Quiz.query.filter_by(id=id).first()
+#     if form.validate_on_submit():
+#         message_z = "przeszło walidację"
+#         q = Quiz.query.filter_by(id=id).first()
+#         if q is None:
+#             return redirect(url_for('score'))
+#         else:
+#             message_z = "doszło do else"
+#             if str(form.user_answer.data) == str(q.correct_answer):
+#                 message_z = "odpowiedź poprawna"
+#                 current_score = current_user.quiz_score
+#                 current_score = current_score+10
+#                 current_user.quiz_score = current_score
+#                 try:
+#                     db.session.commit()
+#                 except:
+#                     flash("Wystąpił błąd, spróbuj ponownie.")
+#             else:
+#                 message_z = "odpowiedź niepoprawna"
+#         form.user_answer.data = ''
+#         return redirect(url_for('question2', id=(id + 1), message_z=message_z, cs = current_score, cus = current_user.quiz_score))
+#
+#
+#     return render_template("question2.htm",
+#         form=form,
+#         q=q, message_z=message_z)
 
 @app.errorhandler(404)
 def page_not_found(e):

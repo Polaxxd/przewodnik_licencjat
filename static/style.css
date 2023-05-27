@@ -49,3 +49,72 @@ ul.lead {
 /*.btn-turquoise a:hover{*/
 /*  background-color: lightgrey;*/
 /*}*/
+
+
+  /* Question Page CSS */
+
+  .ques-div{
+    font-size: 20px;
+    margin: 7%;
+    margin-top: 2%;
+  }
+
+  .qnum{
+    font-size: 25px;
+  }
+
+  .ques-heading{
+    font-size: 25px;
+  }
+
+  .options-div{
+    margin-top: 13%;
+  }
+
+  .options-div label{
+    font-size: 17px;
+  }
+  .sub-btn{
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Score Page csss */
+
+  .highest-score{
+    margin-top: 30px;
+    font-size: 18px;
+    width: 80%;
+  }
+
+
+  .score-head {
+    font-size: 35px;
+  }
+
+  .score-circle {
+    border-width: 8px;
+    border-color: blue;
+    position: center;
+    width: 120px;
+    height: 120px;
+    margin-top: 32px;
+    background-color: white;
+    border-radius: 50%;
+    padding-top: 5px;
+  }
+
+  .score-circle h1{
+    font-size: 40px;
+    padding: 17px;
+  }
+
+  .congrats-cls{
+    margin-top: 35px;
+    font-size: 30px;
+  }
+
+  .redirect-links{
+    margin-top: 60px;
+    width: 70%;
+  }
