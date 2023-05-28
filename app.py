@@ -7,7 +7,7 @@ from flask import url_for
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, IntegerField, ValidationError
 from wtforms.validators import DataRequired, EqualTo, Length
-from forms import UserForm, NamerForm, LoginForm, QuizForm, QuestionForm, Question2Form, WordForm
+from forms import UserForm, NamerForm, LoginForm, QuizForm, QuestionForm, WordsForm, WordForm
 
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 
@@ -408,7 +408,7 @@ def quiz_answers():
 @app.route('/slowa/dodaj', methods=['GET', 'POST'])
 def add_word():
     added = None
-    form = WordForm()
+    form = WordsForm()
     if form.validate_on_submit():
         word = Words(
             word_text=form.word_text.data,
@@ -432,7 +432,7 @@ def add_word():
 
 @app.route('/slowa/edytuj/<int:id>', methods=['GET', 'POST'])
 def update_word(id):
-    form = WordForm()
+    form = WordsForm()
     word_to_update = Words.query.get_or_404(id)
     my_words = Words.query.order_by(Words.id.asc()).all()
     edited = None
@@ -461,6 +461,23 @@ def update_word(id):
                                form=form,
                                word_to_update=word_to_update,
                                id=id)
+
+@app.route('/slowo/<int:id>', methods=['GET', 'POST'])
+def word(id):
+    form = WordForm()
+    w = Words.query.filter_by(id=id).first()
+    current_score = 0
+    if not w:
+        return redirect(url_for('words_score'))
+    if request.method == 'POST':
+        current_score = 20
+        if str(form.user_answer.data) == str(w.word_text):
+            current_score = 100
+            # dodać tabelę przechowującą dane, zapisywać w niej wyniki i pamiętać o db.commit
+        # tu może odbyć się losowanie id kolejnego wyrazu. mogłoby być while Stats.query.filter_by(user.id = current_user.id) == None,
+        # ale trzeba zabezpieczyć, przed pętlą nieskończoną. może po prostu byle było inne słowo niż przed chwilą i z zakresu dostępnych id
+        return redirect(url_for('word', id=(id+1), current_score=current_score))
+    return render_template('words/word.htm', form=form, w=w, current_score = current_score)
 
 @app.errorhandler(404)
 def page_not_found(e):

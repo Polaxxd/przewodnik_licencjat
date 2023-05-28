@@ -44,13 +44,13 @@ class Question2Form(FlaskForm):
     submit = SubmitField('Dalej')
 
 # Create a Form Class for words
-class WordForm(FlaskForm):
+class WordsForm(FlaskForm):
     word_text = StringField("Słowo", validators=[DataRequired()])
     characters = StringField("Znaki", validators=[DataRequired()])
     video = StringField("Nazwa filmu")
     submit = SubmitField("Zapisz")
 
-    # id = db.Column(db.Integer, primary_key=True)
-    # word_text = db.Column(db.String(200), nullable=False, unique=True)
-    # characters = db.Column(db.Text)
-    # video = db.Column(db.String(200), default="no_video")
+# Create a Form Class for word guessing
+class WordForm(FlaskForm):
+    user_answer = StringField("Twoja odpowiedź", validators=[DataRequired()])
+    submit = SubmitField('Dalej')
