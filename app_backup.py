@@ -115,11 +115,11 @@ def kultura():
 
 @app.route('/daktylografia')
 def daktylografia():
-    return render_template('daktylografia.htm')
+    return render_template('daktylografia/daktylografia.htm')
 
 @app.route('/daktylografia/teoria')
 def daktylografia_teoria():
-    return render_template('teoria.htm')
+    return render_template('daktylografia/teoria.htm')
 
 @app.route('/o_serwisie')
 def o_serwisie():
@@ -140,7 +140,7 @@ def login():
                 flash("Błędne hasło!")
         else:
             flash("Brak użytkownika.")
-    return render_template('login.htm', form=form)
+    return render_template('users/login.htm', form=form)
 
 @app.route('/wyloguj', methods=['GET', 'POST'])
 @login_required
@@ -191,10 +191,10 @@ def add_user():
         form.nick.data = ''
         form.password_hash.data = ''
     our_users = Users.query.order_by(Users.date_added)
-    return render_template("add_user.htm",
-        form=form,
-        name=name,
-        our_users=our_users)
+    return render_template("users/add_user.htm",
+                           form=form,
+                           name=name,
+                           our_users=our_users)
 
 @app.route('/uzytkownik/edytuj/<int:id>', methods=['GET', 'POST'])
 def update(id):
@@ -213,17 +213,17 @@ def update(id):
                 flash("Zmieniono dane.")
                 edited = "tak"
                 title = "Zmieniono dane."
-                return render_template("back_to_users.htm", title = title)
+                return render_template("users/back_to_users.htm", title = title)
             except:
                 flash("Wystąpił błąd, spróbuj ponownie.")
-                return render_template("update.htm",
+                return render_template("users/update.htm",
                                        form=form,
                                        user_to_update=user_to_update)
         else:
             # uwaga! to psuje, jeśli użytkownik nie zmieni nicku! coś jest źle!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! <-rozwiązanie: można usunąć możliwość zmiany nicku
             flash("Użytkownik o tym nicku już istnieje. Wybierz inną nazwę użytkownika.")
     else:
-        return render_template("update.htm",
+        return render_template("users/update.htm",
                                form=form,
                                user_to_update=user_to_update,
                                id=id)
@@ -241,11 +241,11 @@ def delete(id):
         flash("Usunięto użytkownika")
         deleted = "tak"
         our_users = Users.query.order_by(Users.date_added)
-        return render_template("back_to_users.htm", title = title)
+        return render_template("users/back_to_users.htm", title = title)
     except:
         flash("Wystąpił błąd, spróbuj ponownie.")
         our_users = Users.query.order_by(Users.date_added)
-        return render_template("add_user.htm", form=form, name=name, our_users=our_users)
+        return render_template("users/add_user.htm", form=form, name=name, our_users=our_users)
 
 @app.route('/quiz/dodaj', methods=['GET', 'POST'])
 def add_question():
@@ -273,7 +273,7 @@ def add_question():
         form.correct_answer.data = ''
 
     my_questions = Quiz.query.order_by(Quiz.id.asc()).all()
-    return render_template("quiz_adding.htm",
+    return render_template("quiz/quiz_adding.htm",
                            form=form,
                            added=added,
                            my_questions=my_questions)
@@ -295,20 +295,20 @@ def update_question(id):
             db.session.commit()
             flash("Zmieniono dane.")
             edited = "tak"
-            return render_template("quiz_adding.htm",
+            return render_template("quiz/quiz_adding.htm",
                                    form=form,
                                    my_questions=my_questions,
                                    edited=edited
                                    )
         except:
             flash("Wystąpił błąd, spróbuj ponownie.")
-            return render_template("quiz_update.htm",
+            return render_template("quiz/quiz_update.htm",
                                    form=form,
                                    question_to_update=question_to_update,
                                    id=id)
 
     else:
-        return render_template("quiz_update.htm",
+        return render_template("quiz/quiz_update.htm",
                                form=form,
                                question_to_update=question_to_update,
                                id=id)

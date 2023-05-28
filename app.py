@@ -7,7 +7,7 @@ from flask import url_for
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, IntegerField, ValidationError
 from wtforms.validators import DataRequired, EqualTo, Length
-from forms import UserForm, NamerForm, LoginForm, QuizForm, QuestionForm, Question2Form
+from forms import UserForm, NamerForm, LoginForm, QuizForm, QuestionForm, Question2Form, WordForm
 
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 
@@ -69,6 +69,13 @@ class Quiz(db.Model):
     option4 = db.Column(db.String(255))
     correct_answer = db.Column(db.Integer, nullable=False)
 
+# Create Model for Words
+class Words(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    word_text = db.Column(db.String(200), nullable=False, unique=True)
+    characters = db.Column(db.String(255))
+    video = db.Column(db.String(200), default="no_video")
+
 
 # Flask Login
 login_manager = LoginManager()
@@ -90,11 +97,11 @@ def kultura():
 
 @app.route('/daktylografia')
 def daktylografia():
-    return render_template('daktylografia.htm')
+    return render_template('daktylografia/daktylografia.htm')
 
 @app.route('/daktylografia/teoria')
 def daktylografia_teoria():
-    return render_template('teoria.htm')
+    return render_template('daktylografia/teoria.htm')
 
 @app.route('/o_serwisie')
 def o_serwisie():
@@ -115,7 +122,7 @@ def login():
                 flash("Błędne hasło!")
         else:
             flash("Brak użytkownika.")
-    return render_template('login.htm', form=form)
+    return render_template('users/login.htm', form=form)
 
 @app.route('/wyloguj', methods=['GET', 'POST'])
 @login_required
@@ -166,10 +173,10 @@ def add_user():
         form.nick.data = ''
         form.password_hash.data = ''
     our_users = Users.query.order_by(Users.date_added)
-    return render_template("add_user.htm",
-        form=form,
-        name=name,
-        our_users=our_users)
+    return render_template("users/add_user.htm",
+                           form=form,
+                           name=name,
+                           our_users=our_users)
 
 @app.route('/uzytkownik/edytuj/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -189,17 +196,17 @@ def update(id):
                 flash("Zmieniono dane.")
                 edited = "tak"
                 title = "Zmieniono dane."
-                return render_template("back_to_users.htm", title = title)
+                return render_template("users/back_to_users.htm", title = title)
             except:
                 flash("Wystąpił błąd, spróbuj ponownie.")
-                return render_template("update.htm",
+                return render_template("users/update.htm",
                                        form=form,
                                        user_to_update=user_to_update)
         else:
             # uwaga! to psuje, jeśli użytkownik nie zmieni nicku! coś jest źle!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! <-rozwiązanie: można usunąć możliwość zmiany nicku
             flash("Użytkownik o tym nicku już istnieje. Wybierz inną nazwę użytkownika.")
     else:
-        return render_template("update.htm",
+        return render_template("users/update.htm",
                                form=form,
                                user_to_update=user_to_update,
                                id=id)
@@ -217,11 +224,11 @@ def delete(id):
         flash("Usunięto użytkownika")
         deleted = "tak"
         our_users = Users.query.order_by(Users.date_added)
-        return render_template("back_to_users.htm", title = title)
+        return render_template("users/back_to_users.htm", title = title)
     except:
         flash("Wystąpił błąd, spróbuj ponownie.")
         our_users = Users.query.order_by(Users.date_added)
-        return render_template("add_user.htm", form=form, name=name, our_users=our_users)
+        return render_template("users/add_user.htm", form=form, name=name, our_users=our_users)
 
 # @app.route('/quiz', methods=['GET', 'POST'])
 # def quiz():
@@ -265,7 +272,7 @@ def add_question():
         form.correct_answer.data = ''
 
     my_questions = Quiz.query.order_by(Quiz.id.asc()).all()
-    return render_template("quiz_adding.htm",
+    return render_template("quiz/quiz_adding.htm",
                            form=form,
                            added=added,
                            my_questions=my_questions)
@@ -287,20 +294,20 @@ def update_question(id):
             db.session.commit()
             flash("Zmieniono dane.")
             edited = "tak"
-            return render_template("quiz_adding.htm",
+            return render_template("quiz/quiz_adding.htm",
                                    form=form,
                                    my_questions=my_questions,
                                    edited=edited
                                    )
         except:
             flash("Wystąpił błąd, spróbuj ponownie.")
-            return render_template("quiz_update.htm",
+            return render_template("quiz/quiz_update.htm",
                                    form=form,
                                    question_to_update=question_to_update,
                                    id=id)
 
     else:
-        return render_template("quiz_update.htm",
+        return render_template("quiz/quiz_update.htm",
                                form=form,
                                question_to_update=question_to_update,
                                id=id)
@@ -351,20 +358,20 @@ def question(id):
                 flash("Wystąpił błąd, spróbuj ponownie.")
         return redirect(url_for('question', id=(id+1)))
     form.options.choices = [('1', q.option1), ('2', q.option2), ('3', q.option3), ('4', q.option4)]
-    return render_template('question.htm', form=form, q=q, title='Question {}'.format(id))
+    return render_template('quiz/question.htm', form=form, q=q, title='Question {}'.format(id))
 
 
 @app.route('/wynik_quizu')
 @login_required
 def score():
     final_score = current_user.quiz_score
-    return render_template('score.htm', title='Final Score', score=final_score)
+    return render_template('quiz/score.htm', title='Final Score', score=final_score)
 
 @app.route('/quiz/odpowiedzi')
 @login_required
 def quiz_answers():
     my_questions = Quiz.query.order_by(Quiz.id.asc()).all()
-    return render_template('quiz_answers.htm', my_questions=my_questions)
+    return render_template('quiz/quiz_answers.htm', my_questions=my_questions)
 
 # @app.route('/pytanie/<int:id>', methods=['GET', 'POST'])
 # def question2(id):
@@ -397,6 +404,63 @@ def quiz_answers():
 #     return render_template("question2.htm",
 #         form=form,
 #         q=q, message_z=message_z)
+
+@app.route('/slowa/dodaj', methods=['GET', 'POST'])
+def add_word():
+    added = None
+    form = WordForm()
+    if form.validate_on_submit():
+        word = Words(
+            word_text=form.word_text.data,
+            characters=form.characters.data,
+            video=form.video.data,
+        )
+        db.session.add(word)
+        db.session.commit()
+        flash("Dodano wyraz")
+        added = "tak"
+
+        form.word_text.data = ''
+        form.characters.data = ''
+        form.video.data = ''
+
+    my_words = Words.query.order_by(Words.id.asc()).all()
+    return render_template("words/words_adding.htm",
+                           form=form,
+                           added=added,
+                           my_words=my_words)
+
+@app.route('/slowa/edytuj/<int:id>', methods=['GET', 'POST'])
+def update_word(id):
+    form = WordForm()
+    word_to_update = Words.query.get_or_404(id)
+    my_words = Words.query.order_by(Words.id.asc()).all()
+    edited = None
+    if request.method == "POST":
+        word_to_update.word_text = request.form['word_text']
+        word_to_update.characters = request.form['characters']
+        word_to_update.video = request.form['video']
+        try:
+            db.session.commit()
+            flash("Zmieniono dane.")
+            edited = "tak"
+            return render_template("words/words_adding.htm",
+                                   form=form,
+                                   my_words=my_words,
+                                   edited=edited
+                                   )
+        except:
+            flash("Wystąpił błąd, spróbuj ponownie.")
+            return render_template("words/words_update.htm",
+                                   form=form,
+                                   word_to_update=word_to_update,
+                                   id=id)
+
+    else:
+        return render_template("words/words_update.htm",
+                               form=form,
+                               word_to_update=word_to_update,
+                               id=id)
 
 @app.errorhandler(404)
 def page_not_found(e):

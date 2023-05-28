@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/20_palonek/przewodnik//static/style.css">
     <link rel="shortcut icon" href="/20_palonek/przewodnik/static/images/motyl.png">
-    <title>Przewodnik po świecie ciszy</title>
+    <title>Przewodnik po świecie ciszy - dodawanie użytkowników</title>
 </head>
 <body>
     <!-- nawigacja -->
@@ -32,29 +32,19 @@
                     <li class="nav-item">
                         <a href="/20_palonek/przewodnik/o_serwisie" class="nav-link">O serwisie</a>
                     </li>
-                    <li class="nav-item">
-                        {% if current_user.is_authenticated %}
-                            <a href="{{ url_for('dashboard') }}" class="btn btn-success btn-small">Mój profil</a>
-                        {% else %}
-                            <a href="{{ url_for('login') }}" class="btn btn-success btn-small">Logowanie</a>
-                        {% endif %}
-                    </li>
                 </ul>
             </div>
         </div>
     </nav>
 
     <!-- nagłówek -->
-        <!-- p-5 - padding (wartości 1-5); może być pt - padding top, pb, px (po prawej i lewej), py -->
-    <section class="bg-dark text-light p-5 text-center">
+    <section class="bg-dark text-light p-5 text-center text-sm-start">
         <div class="container">
             <div class="d-sm-flex">
                 <div class="mx-4">
                     <h1>Przewodnik po świecie <span class="text-turquoise">ciszy</span> </h1>
-                    <div class="showcase-left">
-                    <p class="lead">
-                        Odpowiedzi do quizu.
-                    </p>
+                    <div class="container ">
+                        <h1>Lista wyrazów</h1>
                     </div>
                 </div>
                 <img id="motyl" class="img-fluid w-25" src="/20_palonek/przewodnik/static/images/motyl.png" alt="Logo motyla w kolorach białym i turkusowym">
@@ -63,27 +53,54 @@
     </section>
 
     <!-- podstrony -->
-    <section class=" p-5 bg-turquoise">
+    <section class=" p-5 bg-turquoise text-dark">
         <div class="container">
-            {% for que in my_questions %}
-                <h2>{{que.question_text}}</h2>
-                <ol>
-                    <li>
-                        {{ que.option1 }}
-                    </li>
-                    <li>
-                        {{ que.option2 }}
-                    </li>
-                    <li>
-                        {{ que.option3 }}
-                    </li>
-                    <li>
-                        {{ que.option4 }}
-                    </li>
-                </ol>
-                <h6 class="ml-5">Poprawna odpowiedź: {{ que.correct_answer }}</h6>
-                <hr>
+            {% for message in get_flashed_messages() %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
             {% endfor %}
+
+{% if edited %}
+	<h1>Pomyślnie zmieniono dane!</h1>
+	<br/><br/>
+<table class="table table-hover table-bordered table-striped">
+
+{% for my_word in my_words %}
+	<tr>
+	<td>
+        {{ my_word.id }}. {{ my_word.word_text }}
+    </td>
+    <td>
+        <a href="{{ url_for('update_word', id=my_word.id) }}" class="btn btn-warning"> Edytuj</a>
+    </td>
+	</tr>
+{% endfor %}
+
+</table>
+
+
+{% else %}
+<div class="shadow p-3 mb-5 bg-body rounded">
+	<form method="POST">
+		{{ form.hidden_tag() }}
+		{{ form.word_text.label(class="form-label") }}
+		{{ form.word_text(class="form-control", value=word_to_update.word_text) }}
+		<br/>
+		{{ form.characters.label(class="form-label") }}
+		{{ form.characters(class="form-control", value=word_to_update.option1) }}
+		<br/>
+        {{ form.video.label(class="form-label") }}
+		{{ form.video(class="form-control", value=word_to_update.option2) }}
+		<br/>
+		{{ form.submit(class="btn btn-success") }}
+	</form>
+</div>
+
+
+{% endif %}
+
         </div>
     </section>
 
@@ -101,8 +118,6 @@
     <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/scrollreveal"></script>
-
 
 </body>
 </html>
