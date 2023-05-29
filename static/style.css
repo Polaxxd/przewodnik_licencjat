@@ -46,6 +46,21 @@ ul.lead {
   padding-top: 0 !important;
 }
 
+.letter_photo {
+    display: inline-block;
+    margin: 2px;
+}
+
+.letter_photo img {
+    width: 120px;
+}
+
+.word_photo_ {
+  width: 100%;
+  display: inline;
+  height: 120px;
+}
+
 /*.btn-turquoise a:hover{*/
 /*  background-color: lightgrey;*/
 /*}*/

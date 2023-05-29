@@ -76,6 +76,15 @@ class Words(db.Model):
     characters = db.Column(db.String(255))
     video = db.Column(db.String(200), default="no_video")
 
+# Create Model for Scores
+class Scores(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    word_id = db.Column(db.Integer, db.ForeignKey('words.id'))
+    type = db.Column(db.String(200), nullable=False)
+    score = db.Column(db.Integer, nullable=False, default=0)
+    date_added = db.Column(db.DateTime, default=datetime.utcnow)
+
 
 # Flask Login
 login_manager = LoginManager()
@@ -406,6 +415,7 @@ def quiz_answers():
 #         q=q, message_z=message_z)
 
 @app.route('/slowa/dodaj', methods=['GET', 'POST'])
+@login_required
 def add_word():
     added = None
     form = WordsForm()
@@ -431,6 +441,7 @@ def add_word():
                            my_words=my_words)
 
 @app.route('/slowa/edytuj/<int:id>', methods=['GET', 'POST'])
+@login_required
 def update_word(id):
     form = WordsForm()
     word_to_update = Words.query.get_or_404(id)
@@ -463,21 +474,47 @@ def update_word(id):
                                id=id)
 
 @app.route('/slowo/<int:id>', methods=['GET', 'POST'])
-def word(id):
+@login_required
+def word_photos(id):
     form = WordForm()
     w = Words.query.filter_by(id=id).first()
+    chars = w.characters
+    chars_list = chars.split(" ")
     current_score = 0
     if not w:
-        return redirect(url_for('words_score'))
+        return redirect(url_for('words_end'))
     if request.method == 'POST':
         current_score = 20
         if str(form.user_answer.data) == str(w.word_text):
             current_score = 100
-            # dodać tabelę przechowującą dane, zapisywać w niej wyniki i pamiętać o db.commit
+            score1=Scores(
+                word_id = id,
+                user_id = current_user.id,
+                type = "photo",
+                score = 1
+            )
+            db.session.add(score1)
+            db.session.commit()
         # tu może odbyć się losowanie id kolejnego wyrazu. mogłoby być while Stats.query.filter_by(user.id = current_user.id) == None,
-        # ale trzeba zabezpieczyć, przed pętlą nieskończoną. może po prostu byle było inne słowo niż przed chwilą i z zakresu dostępnych id
-        return redirect(url_for('word', id=(id+1), current_score=current_score))
-    return render_template('words/word.htm', form=form, w=w, current_score = current_score)
+        # ale trzeba zabezpieczyć, przed pętlą nieskończoną. może po prostu byle było inne słowo niż przed chwilą i z zakresu dostępnych id - nope, bo w tablicy wyników będzie wariować
+
+        else:
+            current_score = 0
+            score1 = Scores(
+                word_id=id,
+                user_id=current_user.id,
+                type="photo",
+                score=0
+            )
+            db.session.add(score1)
+            db.session.commit()
+        return redirect(url_for('word_photos', id=(id + 1), current_score=current_score))
+    return render_template('words/word.htm', form=form, w=w, current_score = current_score, chars_list=chars_list)
+
+@app.route('/slowa_koniec', methods=['GET', 'POST'])
+@login_required
+def words_end():
+    return render_template('words/words_end.htm')
 
 @app.errorhandler(404)
 def page_not_found(e):
