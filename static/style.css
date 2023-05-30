@@ -55,7 +55,22 @@ ul.lead {
     width: 120px;
 }
 
-.word_photo_ {
+.word_photo {
+  width: 100%;
+  display: inline;
+  height: 120px;
+}
+
+.letter_video {
+    display: inline-block;
+    margin: 2px;
+}
+
+.letter_video img {
+    width: 120px;
+}
+
+.word_video {
   width: 100%;
   display: inline;
   height: 120px;

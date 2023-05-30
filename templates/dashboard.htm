@@ -76,8 +76,75 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             {% endfor %}
+            <!-- zdjęcia -->
+            <h1 class="mt-5">Wyniki "Odczytywanie słów ze zdjęć":</h1>
+	        <br/>
+        {% if ps %}
+            <table class="table table-hover table-bordered table-striped">
+            {% for photo_score in photo_scores %}
+                <tr>
+                <td>{{ photo_score.id }}
+                </td>
+                <td>
+                    {% for word in all_words %}
+                        {% if word.id == photo_score.word_id %}
+                            {{ word.word_text }}
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                <td>{% if photo_score.score == 1 %}
+                    <i class="bi bi-check-circle"></i>
+                    {% else %}
+                    <i class="bi bi-x-circle"></i>
+                    {% endif %}
+                </td>
+                </tr>
+            {% endfor %}
+                <tr>
+                    <td colspan="2"><strong>Wynik</strong></td>
+                    <td>{{ photo_user_points }}/{{ photo_max_points }}</td>
+                </tr>
+            </table>
+        {% else %}
+            <p class="lead">Nie masz jeszcze wyników w tej kategorii. <a href="{{ url_for('word_photos_start') }}" class="btn btn-my_default">Zagraj</a></p>
+
+        {% endif %}
+        <br><hr>
 
 
+        <!-- nagrania -->
+        <h1 class="mt-5">Wyniki "Odczytywanie słów z nagrań":</h1>
+	        <br/>
+        {% if vs %}
+            <table class="table table-hover table-bordered table-striped">
+            {% for video_score in video_scores %}
+                <tr>
+                <td>{{ video_score.id }}
+                </td>
+                <td>
+                    {% for word in all_words %}
+                        {% if word.id == video_score.word_id %}
+                            {{ word.word_text }}
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                <td>{% if video_score.score == 1 %}
+                    <i class="bi bi-check-circle"></i>
+                    {% else %}
+                    <i class="bi bi-x-circle"></i>
+                    {% endif %}
+                </td>
+                </tr>
+            {% endfor %}
+                <tr>
+                    <td colspan="2"><strong>Wynik</strong></td>
+                    <td>{{ video_user_points }}/{{ video_max_points }}</td>
+                </tr>
+            </table>
+        {% else %}
+            <p class="lead">Nie masz jeszcze wyników w tej kategorii. <a href="{{ url_for('word_videos_start') }}" class="btn btn-my_default">Zagraj</a></p>
+
+        {% endif %}
         </div>
     </section>
 

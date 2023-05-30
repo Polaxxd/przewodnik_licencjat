@@ -143,7 +143,62 @@ def logout():
 @app.route('/panel_uzytkownika')
 @login_required
 def dashboard():
-    return render_template('dashboard.htm')
+    photo_scores = Scores.query.filter_by(user_id=current_user.id, type="photo").order_by(Scores.date_added)
+    ps = None
+    photo_user_points = 0
+    photo_max_points = 0
+    video_scores = Scores.query.filter_by(user_id=current_user.id, type="video").order_by(Scores.date_added)
+    vs = None
+    video_user_points = 0
+    video_max_points = 0
+    all_words = Words.query.order_by(Words.id)
+    for photo_score in photo_scores:
+        ps = "yes"
+        photo_max_points += 1
+        if photo_score.score == 1:
+            photo_user_points += 1
+    for video_score in video_scores:
+        vs = "yes"
+        video_max_points += 1
+        if video_score.score == 1:
+            video_user_points += 1
+    return render_template('dashboard.htm',
+                           photo_scores=photo_scores,
+                           video_scores = video_scores,
+                           all_words=all_words,
+                           photo_user_points=photo_user_points,
+                           photo_max_points=photo_max_points,
+                           video_user_points = video_user_points,
+                           video_max_points = video_max_points,
+                           vs = vs,
+                           ps = ps
+                           )
+
+@app.route('/uzytkownik/zarejestruj', methods=['GET', 'POST'])
+def register():
+    name = None
+    added = None
+    form = UserForm()
+    if form.validate_on_submit():
+        user = Users.query.filter_by(nick=form.nick.data).first()
+        if user is None:
+            #hash the password
+            hashed_pw = generate_password_hash(form.password_hash.data, "sha256")
+            user = Users(name=form.name.data, nick=form.nick.data, password_hash=hashed_pw)
+            db.session.add(user)
+            db.session.commit()
+            flash("Dodano użytkownika!")
+            added = "tak"
+        else:
+            flash("Użytkownik o tym nicku już istnieje. Wybierz inną nazwę użytkownika.")
+        name = form.name.data
+        form.name.data = ''
+        form.nick.data = ''
+        form.password_hash.data = ''
+    return render_template("users/register.htm",
+                           form=form,
+                           name=name)
+
 
 @app.route('/uzytkownik', methods=['GET', 'POST'])
 def name():
@@ -350,6 +405,7 @@ def update_question(id):
 def question(id):
     form = QuestionForm()
     q = Quiz.query.filter_by(id=id).first()
+    #działa?
     if id == 1:
         if current_user.quiz_score > 0:
             return redirect(url_for('score'))
@@ -473,20 +529,18 @@ def update_word(id):
                                word_to_update=word_to_update,
                                id=id)
 
-@app.route('/slowo/<int:id>', methods=['GET', 'POST'])
+@app.route('/zdjecia/<int:id>', methods=['GET', 'POST'])
 @login_required
 def word_photos(id):
     form = WordForm()
     w = Words.query.filter_by(id=id).first()
-    chars = w.characters
-    chars_list = chars.split(" ")
-    current_score = 0
     if not w:
         return redirect(url_for('words_end'))
+    else:
+        chars = w.characters
+        chars_list = chars.split(" ")
     if request.method == 'POST':
-        current_score = 20
         if str(form.user_answer.data) == str(w.word_text):
-            current_score = 100
             score1=Scores(
                 word_id = id,
                 user_id = current_user.id,
@@ -495,11 +549,8 @@ def word_photos(id):
             )
             db.session.add(score1)
             db.session.commit()
-        # tu może odbyć się losowanie id kolejnego wyrazu. mogłoby być while Stats.query.filter_by(user.id = current_user.id) == None,
-        # ale trzeba zabezpieczyć, przed pętlą nieskończoną. może po prostu byle było inne słowo niż przed chwilą i z zakresu dostępnych id - nope, bo w tablicy wyników będzie wariować
-
+            flash("Poprawnie!")
         else:
-            current_score = 0
             score1 = Scores(
                 word_id=id,
                 user_id=current_user.id,
@@ -508,8 +559,63 @@ def word_photos(id):
             )
             db.session.add(score1)
             db.session.commit()
-        return redirect(url_for('word_photos', id=(id + 1), current_score=current_score))
-    return render_template('words/word.htm', form=form, w=w, current_score = current_score, chars_list=chars_list)
+            flash("Niepoprawnie.")
+        return redirect(url_for('word_photos', id=(id + 1)))
+    return render_template('words/word_photo.htm', form=form, w=w, chars_list=chars_list)
+
+@app.route('/zdjecia/start')
+@login_required
+def word_photos_start():
+    s = Scores.query.filter_by(user_id=current_user.id, type="photo").order_by(Scores.date_added.desc()).first()
+    if s is None:
+        new_id = 1
+    else:
+        last_id = s.word_id
+        new_id = last_id+1
+    return render_template('words/words_photos_start.htm', new_id=new_id)
+
+@app.route('/nagrania/<int:id>', methods=['GET', 'POST'])
+@login_required
+def word_videos(id):
+    form = WordForm()
+    w = Words.query.filter_by(id=id).first()
+    if not w:
+        return redirect(url_for('words_end'))
+    else:
+        video_file = w.video
+    if request.method == 'POST':
+        if str(form.user_answer.data) == str(w.word_text):
+            score1=Scores(
+                word_id = id,
+                user_id = current_user.id,
+                type = "video",
+                score = 1
+            )
+            db.session.add(score1)
+            db.session.commit()
+        else:
+            score1 = Scores(
+                word_id=id,
+                user_id=current_user.id,
+                type="video",
+                score=0
+            )
+            db.session.add(score1)
+            db.session.commit()
+        return redirect(url_for('word_videos', id=(id + 1)))
+    return render_template('words/word_video.htm', form=form, w=w, video_file=video_file)
+
+@app.route('/nagrania/start')
+@login_required
+def word_videos_start():
+    s = Scores.query.filter_by(user_id=current_user.id, type="video").order_by(Scores.date_added.desc()).first()
+    if s is None:
+        new_id = 1
+    else:
+        last_id = s.word_id
+        new_id = last_id + 1
+    return render_template('words/words_videos_start.htm', new_id=new_id)
+
 
 @app.route('/slowa_koniec', methods=['GET', 'POST'])
 @login_required

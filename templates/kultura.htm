@@ -113,10 +113,10 @@
                     </div>
                 </div>
                 <div class="col-md mx-4 my-3">
-                    <a href="#" class="btn btn-success">SŁOWNIK POJĘĆ</a>
+                    <a href="#slownik" class="btn btn-success">SŁOWNIK POJĘĆ</a>
                 </div>
                 <div class="col-md mx-4 my-3">
-                    <a href="{{ url_for('question', id=1) }}" class="btn btn-success">QUIZ</a>
+                    <a href="#quiz" class="btn btn-success">QUIZ</a>
                 </div>
             </div>
         </div>
@@ -179,10 +179,10 @@
                        w Niemczech niemiecki język migowy (Deutsche Gebärdensprache – DGS), w USA amerykański język migowy
                        (american sign language – ASL), a w Wielkiej Brytanii brytyjski język migowy (british sign language – BSL)
                        itd. Oprócz tego w językach migowych występują liczne dialekty.</p>
-                        <h3 id="dialekty">Dlaczego Głuchy Krakowiak miga inaczej niż Głuch Warszawiak? - dialekty</h3>
+                        <h3 id="dialekty">Dlaczego Głuchy Krakowiak miga inaczej niż Głuchy Warszawiak? - dialekty</h3>
                         <p class="lead">Języki migowe są trudne do zapisania, a co za tym idzie do zunifikowania. Dlatego dialekty w języku migowym
                         są znacznie bardziej widoczne niż w języku fonicznym. Nie sprawia to jednak, że Głuchy z Krakowa i Głuchy z Warszawy,
-                        czy dowolnych innych częścu Polski nie będą w stanie porozuieć się w PJM. Niektóre znaki się różnią, ale język
+                        czy dowolnych innych części Polski nie będą w stanie porozumieć się w PJM. Niektóre znaki się różnią, ale język
                         pozostaje ten sam.</p>
                         <h3 id="rozmowy_miedzynarodowe">Jak porozumiewają się głusi z różnych krajów?</h3>
                         <p class="lead">Niektórzy głusi uczą się amerykańskiego języka migowego (ASL) i w ten sposób mogą się porozumiewać.
@@ -192,17 +192,74 @@
                             swojego języka migowego. International Sign pozwala komunikować się np. na konferencjach międzynarodowych, nie stanowi
                             jednak odrębnego języka, a system.</p>
                         <h3 id="pjm_sjm">Czym jest PJM i SJM?</h3>
-                        <p class="lead">PJM, czyli polski język migowy jest językiem naturalnym, którym posługują się Głusi w Polsce, a także pierwszym
+                        <p class="lead"><a href="#slownik-pjm">PJM</a>, czyli polski język migowy jest językiem naturalnym, którym posługują się Głusi w Polsce, a także pierwszym
                             językiem dzieci, których rodzice są Głusi. PJM ma własną gramatykę, słownictwo i zwroty,
                             ma więc niewiele wspólnego z językiem polskim. Dlatego dla osób, które wychowały się w
                             głuchych rodzinach język polski jest językiem obcym, a pierwszym językiem jest PJM.</p>
-                        <p class="lead">SJM to system językowo-migowy. W przeciwieństwie do PJM nie jest językiem naturalnym, a sztucznym systemem,
+                        <p class="lead"><a href="#slownik-sjm">SJM</a> to system językowo-migowy. W przeciwieństwie do PJM nie jest językiem naturalnym, a sztucznym systemem,
                        który miał ułatwić osobom słyszącym komunikację z głuchymi. Są to wybrane znaki PJM migane zgodnie z gramatyką
                        języka polskiego. To połączenie sprawia, że dla osoby głuchej, która nie zna języka polskiego, zdanie migane
                        w SJM może być zupełnie niezrozumiałe.</p>
                     </div>
                     <div class="col-md-3">
                         <img src="/20_palonek/przewodnik/static/images/jezyk.svg" class="img-fluid" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="kultura" class="p-md-5 bg-total_turquoise text-dark">
+        <div class="container">
+            <div class="content_on_the_right">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-md-3">
+                        <img src="/20_palonek/przewodnik/static/images/jezyk.svg" class="img-fluid" alt="">
+                    </div>
+                    <div class="col-md p-5">
+                        <h2>&nbsp;KULTURA GŁUCHYCH</h2>
+                        <h3 id="#">?</h3>
+                        <p class="lead">.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="slownik" class="p-md-5 bg-light text-dark">
+        <div class="container">
+            <div class="content_on_the_left">
+                    <div>
+                        <h2>&nbsp;SŁOWNIK POJĘĆ</h2>
+                        <ul>
+                            <li>
+                                <h4 id="slownik-pjm">PJM</h4>
+                                <p class="lead">PJM (polski język migowy) - język naturalny używany przez Głuchych w Polsce.
+                                    Ma własną gramatykę i słownictwo. Podstawowymi elementami tego języka są gesty, przestrzeń i mimika.</p>
+                            </li>
+                            <li>
+                                <h4 id="slownik-sjm">SJM</h4>
+                                <p class="lead">SJM (system językowo-migowy) - sztuczny system komunikacji stworzony w latach 70.,
+                                żeby ułatwić słyszącym porozumiewanie się z głuchymi. Nie jest językiem naturalnym a systemem znaków
+                                miganych wg gramatyki języka polskiego.</p>
+                            </li>
+                        </ul>
+                    </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="quiz" class="p-md-5 bg-turquoise text-dark">
+        <div class="container">
+            <div class="content_on_the_left">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-md p-5">
+                            <h2>&nbsp;QUIZ</h2>
+                        <h3>Chcesz sprawdzić swoją wiedzę o Głuchych? Rozwiąż quiz!</h3>
+                        <a href="{{ url_for('question', id=1) }}" class="btn btn-success">Rozpocznij quiz</a>
+                    </div>
+                    <div class="col-md-3">
+                        <img src="/20_palonek/przewodnik/static/images/quiz.svg" class="img-fluid" alt="">
                     </div>
                 </div>
             </div>

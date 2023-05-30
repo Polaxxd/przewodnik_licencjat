@@ -9,11 +9,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/20_palonek/przewodnik//static/style.css">
     <link rel="shortcut icon" href="/20_palonek/przewodnik/static/images/motyl.png">
-    <title>Przewodnik po świecie ciszy - użytkownik</title>
+    <title>Przewodnik po świecie ciszy - dodawanie użytkowników</title>
 </head>
 <body>
-
-<!-- nawigacja -->
+    <!-- nawigacja -->
     <nav class="navbar navbar-expand-lg bg-dark navbar-dark py-3">
         <div class="container">
             <a href="/20_palonek/przewodnik/" class="navbar-brand"><i class="bi bi-house h3 px-2"></i> Przewodnik po świecie ciszy</a>
@@ -45,7 +44,7 @@
                 <div class="mx-4">
                     <h1>Przewodnik po świecie <span class="text-turquoise">ciszy</span> </h1>
                     <div class="container ">
-                        <h1>Logowanie</h1>
+                        <h2>Zarejestruj się</h2>
                     </div>
                 </div>
                 <img id="motyl" class="img-fluid w-25" src="/20_palonek/przewodnik/static/images/motyl.png" alt="Logo motyla w kolorach białym i turkusowym">
@@ -54,37 +53,44 @@
     </section>
 
     <!-- podstrony -->
-    <section class=" p-5 bg-turquoise">
+    <section class=" p-5 bg-turquoise text-dark">
         <div class="container">
             {% for message in get_flashed_messages() %}
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-            <div class="row">
-                <div class="col-md-6 p-2">
-                    <div class="shadow p-3 mb-5 bg-body rounded">
-                        <form method="POST">
-                            {{ form.hidden_tag() }}
-                            {{ form.nick.label(class="form-label") }}
-                            {{ form.nick(class="form-control") }}
-                            <br/>
-                            {{ form.password.label(class="form-label") }}
-                            {{ form.password(class="form-control") }}
-                            <br/>
-                            <br/>
-                            {{ form.submit(class="btn btn-success") }}
-                        </form>
-                    </div>
-                </div>
-                <div class="col-md-6 p-2">
-                    <div class="shadow p-3 mb-5 bg-body rounded">
-                        <h3>Nie masz jeszcze konta?</h3>
-                        <a href="{{ url_for('register') }}" class="btn btn-success">Zarejestruj się!</a>
-                    </div>
-                </div>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+            {% endfor %}
+
+{% if added %}
+	<h2>Witaj {{ name }}!</h2>
+	<p class="lead">Konto utworzone pomyślnie. Możesz przejść do swojego profilu.</p>
+    <a href="{{ url_for('dashboard') }}" class="btn btn-success btn-small">Mój profil</a>
+
+
+{% else %}
+
+<div class="shadow p-3 mb-5 bg-body rounded">
+	<form method="POST">
+		{{ form.hidden_tag() }}
+		{{ form.name.label(class="form-label") }}
+		{{ form.name(class="form-control") }}
+		<br/>
+		{{ form.nick.label(class="form-label") }}
+		{{ form.nick(class="form-control") }}
+		<br/>
+        {{ form.password_hash.label(class="form-label") }}
+		{{ form.password_hash(class="form-control") }}
+		<br/>
+        {{ form.password_hash2.label(class="form-label") }}
+		{{ form.password_hash2(class="form-control") }}
+		<br/>
+		{{ form.submit(class="btn btn-success") }}
+	</form>
+</div>
+
+{% endif %}
+
         </div>
     </section>
 
@@ -102,6 +108,8 @@
     <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+
+
 
 </body>
 </html>

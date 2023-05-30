@@ -72,12 +72,14 @@
     <section class=" p-5 bg-turquoise">
         <div class="container">
             <div class="shadow p-3 mb-5 bg-body rounded">
-                <div class="word_photo">
-                {% for ch in chars_list %}
-                    <div class="letter_photo">
-                <img src="/20_palonek/przewodnik/static/images/{{ ch }}.jpg" class="rounded mx-auto d-block" alt="litera alfabetu palcowego {{ ch }}">
+                <div class="word_video">
+                    <div class="letter_video">
+                        <video width="320" height="320" controls>
+                          <source src="/20_palonek/przewodnik/static/images/{{ video_file }}" type="video/mp4">
+                        Twoja przeglądarka nie wspiera plików wideo w tym formacie.
+                        </video>
+{#                <img src="/20_palonek/przewodnik/static/images/{{video_file}}" class="rounded mx-auto d-block" alt="wyraz literowany przy pomocy alfabetu palcowego">#}
                     </div>
-                {% endfor %}
                 </div>
                 <form method="POST">
                     {{ form.user_answer.label(class="form-label") }}:
