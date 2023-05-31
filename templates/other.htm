@@ -9,11 +9,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/20_palonek/przewodnik//static/style.css">
     <link rel="shortcut icon" href="/20_palonek/przewodnik/static/images/motyl.png">
-    <title>Przewodnik po świecie ciszy</title>
+    <title>Przewodnik po świecie ciszy - o serwisie</title>
 </head>
 <body>
     <!-- nawigacja -->
-    <nav class="navbar navbar-expand-lg bg-dark navbar-dark py-3">
+    <nav class="navbar navbar-expand-lg bg-black navbar-dark py-3">
         <div class="container">
             <a href="/20_palonek/przewodnik/" class="navbar-brand"><i class="bi bi-house h3 px-2"></i> Przewodnik po świecie ciszy</a>
 
@@ -30,7 +30,18 @@
                         <a href="/20_palonek/przewodnik/daktylografia" class="nav-link">Daktylografia</a>
                     </li>
                     <li class="nav-item">
-                        <a href="/20_palonek/przewodnik/o_serwisie" class="nav-link">O serwisie</a>
+                        <a href="/20_palonek/przewodnik/o_serwisie" class="nav-link active">O serwisie</a>
+                    </li>
+                    <li class="nav-item">
+                        {% if current_user.is_authenticated %}
+                            {% if current_user.id == 23 %}
+                                <a href="{{ url_for('admin') }}" class="btn btn-success btn-small">Profil administratora</a>
+                            {% else %}
+                                <a href="{{ url_for('dashboard') }}" class="btn btn-success btn-small">Mój profil</a>
+                            {% endif %}
+                        {% else %}
+                            <a href="{{ url_for('login') }}" class="btn btn-success btn-small">Logowanie</a>
+                        {% endif %}
                     </li>
                 </ul>
             </div>
@@ -38,13 +49,16 @@
     </nav>
 
     <!-- nagłówek -->
+        <!-- p-5 - padding (wartości 1-5); może być pt - padding top, pb, px (po prawej i lewej), py -->
     <section class="bg-dark text-light p-5 text-center text-sm-start">
         <div class="container">
             <div class="d-sm-flex">
                 <div class="mx-4">
-                    <h1>Przewodnik po świecie <span class="text-turquoise">ciszy</span> </h1>
-                    <div class="container ">
-                        <h1>Użytkownicy - logowanie i rejestracja</h1>
+                    <h1>O serwisie </h1>
+                    <div class="showcase-left">
+                    <p class="lead">
+                        Pomóż rozwijać ten serwis!
+                    </p>
                     </div>
                 </div>
                 <img id="motyl" class="img-fluid w-25" src="/20_palonek/przewodnik/static/images/motyl.png" alt="Logo motyla w kolorach białym i turkusowym">
@@ -55,41 +69,15 @@
     <!-- podstrony -->
     <section class=" p-5 bg-turquoise">
         <div class="container">
-            <div class="row">
-                <div class="col-md mx-2 my-3">
-                    <div class="card bg-dark text-light">
-                        <div class="card-body text-center">
-                            <div class="h1 mb-4">
-                                <i class="bi bi-person"></i>
-                            </div>
-                            <h3 class="title">
-                                Strona użytkownika
-                            </h3>
-                            <p class="card-text">
-                                tu będą wyniki i dane uzytkownika
-                            </p>
-                            <a href="/20_palonek/przewodnik/uzytkownik" class="btn btn-my_default">Wejdź</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md mx-2 my-3">
-                    <div class="card bg-dark text-light">
-                        <div class="card-body text-center">
-                            <div class="h1 mb-4">
-                                <i class="bi bi-people"></i>
-                            </div>
-                            <h3 class="title">
-                                Dodawanie użytkowników
-                            </h3>
-                            <p class="card-text">
-                                Dodawanie, edycja, usuwanie i lista użytkowników.
-                            </p>
-                            <a href="/20_palonek/przewodnik/uzytkownik/dodaj" class="btn btn-my_default">Wejdź</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <p class="lead">
+               Propozycję nowych słów, jak i własne nagrania można przesyłać na adres: <strong>przewodnik.po.swiecie.ciszy@gmail.com</strong>.
+                Pamiętaj, by w przypadku nagrań zamieścić informację o wyrażeniu <strong>zgody</strong> na ich wykorzystanie w tym serwisie.
+                W razie pytań, wątpliwości lub w przypadku dostrzeżenia błędu, proszę o kontakt pod adresem: <strong>przewodnik.po.swiecie.ciszy@gmail.com</strong>.
+
+            </p>
         </div>
+
+
     </section>
 
     <!-- footer -->
@@ -102,12 +90,29 @@
         </div>
     </footer>
 
-
     <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
-
-
-
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script>
+        window.sr = ScrollReveal();
+        sr.reveal('.showcase-left', {
+            duration: 2000,
+            origin: 'left',
+            distance: '330px'
+        });
+        sr.reveal('#motyl', {
+            duration: 2000,
+            origin: 'right',
+            distance: '330px',
+            delay: 1000
+        });
+        sr.reveal('.card', {
+            duration: 1500,
+            origin: 'bottom',
+            distance: '330px',
+            delay: 2000
+        });
+    </script>
 </body>
 </html>

@@ -34,7 +34,11 @@
                     </li>
                     <li class="nav-item">
                         {% if current_user.is_authenticated %}
-                            <a href="{{ url_for('dashboard') }}" class="btn btn-success btn-small">Mój profil</a>
+                            {% if current_user.id == 23 %}
+                                <a href="{{ url_for('admin') }}" class="btn btn-success btn-small">Profil administratora</a>
+                            {% else %}
+                                <a href="{{ url_for('dashboard') }}" class="btn btn-success btn-small">Mój profil</a>
+                            {% endif %}
                         {% else %}
                             <a href="{{ url_for('login') }}" class="btn btn-success btn-small">Logowanie</a>
                         {% endif %}

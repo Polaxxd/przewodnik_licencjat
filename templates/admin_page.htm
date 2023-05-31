@@ -45,7 +45,7 @@
                 <div class="mx-4">
                     <div class="container">
                         <div class="card bg-info text-light">
-                            <div class="card-header">Cześć {{ current_user.name }}!
+                            <div class="card-header">Cześć {{ current_user.name }}! Jesteś administratorem :)
                             </div>
                             <div class="card-body">
                                 <h5 class="card-title">Dane użytkownika:</h5>
@@ -68,6 +68,58 @@
     </section>
 
     <!-- podstrony -->
+    <section class="p-5 bg-total_turquoise">
+        <div class="row">
+                <div class="col-md mx-2 my-3">
+                    <div class="card bg-dark text-light">
+                        <div class="card-body text-center">
+                            <div class="h1 mb-4">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                            <h3 class="title">
+                                Użytkownicy
+                            </h3>
+                            <p class="card-text">
+                                Zarządzaj użytkownikami.
+                            </p>
+                            <a href="{{ url_for('add_user') }}" class="btn btn-my_default">Wejdź</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md mx-2 my-3">
+                    <div class="card bg-dark text-light">
+                        <div class="card-body text-center">
+                            <div class="h1 mb-4">
+                                <i class="bi bi-card-list"></i>
+                            </div>
+                            <h3 class="title">
+                                Wyrazy
+                            </h3>
+                            <p class="card-text">
+                                Dodawaj, przeglądaj i edytuj wyrazy.
+                            </p>
+                            <a href="{{ url_for('add_word') }}" class="btn btn-my_default">Wejdź</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md mx-2 my-3">
+                    <div class="card bg-dark text-light">
+                        <div class="card-body text-center">
+                            <div class="h1 mb-4">
+                                <i class="bi bi-question-circle"></i>
+                            </div>
+                            <h3 class="title">
+                                Quiz
+                            </h3>
+                            <p class="card-text">
+                                Dodawaj, przeglądaj i edytuj pytania do quizu.
+                            </p>
+                            <a href="{{ url_for('add_question') }}" class="btn btn-my_default">Wejdź</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </section>
     <section class=" p-5 bg-turquoise">
         <div class="container">
             {% for message in get_flashed_messages() %}

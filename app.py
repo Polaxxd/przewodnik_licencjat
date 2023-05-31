@@ -36,7 +36,7 @@ db.init_app(app)
 # Create Model for Users
 class Users(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(200), nullable=False, unique=True)
+    name = db.Column(db.String(200), nullable=False)
     nick = db.Column(db.String(120), nullable=False, unique=True)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     # Passwords
@@ -115,6 +115,10 @@ def daktylografia_teoria():
 @app.route('/o_serwisie')
 def o_serwisie():
     return render_template('o_serwisie.htm')
+
+@app.route('/other')
+def other():
+    return render_template('other.htm')
 
 @app.route('/logowanie', methods=['GET', 'POST'])
 def login():
@@ -197,50 +201,41 @@ def register():
         form.password_hash.data = ''
     return render_template("users/register.htm",
                            form=form,
-                           name=name)
-
-
-@app.route('/uzytkownik', methods=['GET', 'POST'])
-def name():
-    Nname = None
-    Nform = NamerForm()
-    # Validate Form
-    if Nform.validate_on_submit():
-        Nname = Nform.Nname.data
-        Nform.Nname.data = ''
-        flash("Form Submitted Successfully!")
-
-
-    return render_template("dashboard.htm",
-                           Nname=Nname,
-                           Nform=Nform)
+                           name=name,
+                           added=added)
 
 @app.route('/uzytkownik/dodaj', methods=['GET', 'POST'])
+@login_required
 def add_user():
-    name = None
-    added = None
-    form = UserForm()
-    if form.validate_on_submit():
-        user = Users.query.filter_by(nick=form.nick.data).first()
-        if user is None:
-            #hash the password
-            hashed_pw = generate_password_hash(form.password_hash.data, "sha256")
-            user = Users(name=form.name.data, nick=form.nick.data, password_hash=hashed_pw)
-            db.session.add(user)
-            db.session.commit()
-            flash("Dodano użytkownika!")
-            added = "tak"
-        else:
-            flash("Użytkownik o tym nicku już istnieje. Wybierz inną nazwę użytkownika.")
-        name = form.name.data
-        form.name.data = ''
-        form.nick.data = ''
-        form.password_hash.data = ''
-    our_users = Users.query.order_by(Users.date_added)
-    return render_template("users/add_user.htm",
-                           form=form,
-                           name=name,
-                           our_users=our_users)
+    id_check = current_user.id
+    if id_check == 23:
+        name = None
+        added = None
+        form = UserForm()
+        if form.validate_on_submit():
+            user = Users.query.filter_by(nick=form.nick.data).first()
+            if user is None:
+                #hash the password
+                hashed_pw = generate_password_hash(form.password_hash.data, "sha256")
+                user = Users(name=form.name.data, nick=form.nick.data, password_hash=hashed_pw)
+                db.session.add(user)
+                db.session.commit()
+                flash("Dodano użytkownika!")
+                added = "tak"
+            else:
+                flash("Użytkownik o tym nicku już istnieje. Wybierz inną nazwę użytkownika.")
+            name = form.name.data
+            form.name.data = ''
+            form.nick.data = ''
+            form.password_hash.data = ''
+        our_users = Users.query.order_by(Users.date_added)
+        return render_template("users/add_user.htm",
+                               form=form,
+                               name=name,
+                               our_users=our_users)
+    else:
+        flash("Tylko administrator ma dostęp do tych treści.")
+        return render_template('dashboard.htm')
 
 @app.route('/uzytkownik/edytuj/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -249,26 +244,28 @@ def update(id):
     user_to_update = Users.query.get_or_404(id)
     edited = None
     if request.method == "POST":
-        user = Users.query.filter_by(nick=form.nick.data).first()
-        if user.nick == form.nick.data:
-            user=None
-        if user is None:
-            user_to_update.name = request.form['name']
-            user_to_update.nick = request.form['nick']
-            try:
-                db.session.commit()
-                flash("Zmieniono dane.")
-                edited = "tak"
-                title = "Zmieniono dane."
-                return render_template("users/back_to_users.htm", title = title)
-            except:
-                flash("Wystąpił błąd, spróbuj ponownie.")
-                return render_template("users/update.htm",
-                                       form=form,
-                                       user_to_update=user_to_update)
+        if id == current_user.id or id == 23:
+            user = Users.query.filter_by(nick=form.nick.data).first()
+            if user.nick == form.nick.data:
+                user=None
+            if user is None:
+                user_to_update.name = request.form['name']
+                user_to_update.nick = request.form['nick']
+                try:
+                    db.session.commit()
+                    flash("Zmieniono dane.")
+                    edited = "tak"
+                    title = "Zmieniono dane."
+                    return render_template("users/back_to_users.htm", title = title)
+                except:
+                    flash("Wystąpił błąd, spróbuj ponownie.")
+                    return render_template("users/update.htm",
+                                           form=form,
+                                           user_to_update=user_to_update)
+            else:
+                flash("Użytkownik o tym nicku już istnieje. Wybierz inną nazwę użytkownika.")
         else:
-            # uwaga! to psuje, jeśli użytkownik nie zmieni nicku! coś jest źle!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! <-rozwiązanie: można usunąć możliwość zmiany nicku
-            flash("Użytkownik o tym nicku już istnieje. Wybierz inną nazwę użytkownika.")
+            flash("Użytkownicy mogą zmieniać tylko swoje dane!")
     else:
         return render_template("users/update.htm",
                                form=form,
@@ -276,144 +273,126 @@ def update(id):
                                id=id)
 
 @app.route('/uzytkownik/usun/<int:id>')
+@login_required
 def delete(id):
-    name = None
-    deleted = None
-    title = "Usunięto użytkownika."
-    form = UserForm()
-    user_to_delete = Users.query.get_or_404(id)
-    try:
-        db.session.delete(user_to_delete)
-        db.session.commit()
-        flash("Usunięto użytkownika")
-        deleted = "tak"
-        our_users = Users.query.order_by(Users.date_added)
-        return render_template("users/back_to_users.htm", title = title)
-    except:
-        flash("Wystąpił błąd, spróbuj ponownie.")
-        our_users = Users.query.order_by(Users.date_added)
-        return render_template("users/add_user.htm", form=form, name=name, our_users=our_users)
-
-# @app.route('/quiz', methods=['GET', 'POST'])
-# def quiz():
-#     if request.method == 'POST':
-#         questions = Quiz.query.all()
-#         score = 0
-#         for question in questions:
-#             user_answer = int(request.form.get(f'question_{question.id}'))
-#             question.user_answer = user_answer
-#             if user_answer == question.correct_answer:
-#                 score += 1
-#         db.session.commit()
-#         return render_template('quiz_result.html', score=score)
-#     else:
-#         questions = Quiz.query.all()
-#         return render_template('quiz.html', questions=questions)
-
-@app.route('/quiz/dodaj', methods=['GET', 'POST'])
-def add_question():
-    added = None
-    form = QuizForm()
-    if form.validate_on_submit():
-        quiz = Quiz(
-            question_text=form.question_text.data,
-            option1=form.option1.data,
-            option2=form.option2.data,
-            option3=form.option3.data,
-            option4=form.option4.data,
-            correct_answer=form.correct_answer.data
-        )
-        db.session.add(quiz)
-        db.session.commit()
-        flash("Dodano pytanie")
-        added = "tak"
-
-        form.question_text.data = ''
-        form.option1.data = ''
-        form.option2.data = ''
-        form.option3.data = ''
-        form.option4.data = ''
-        form.correct_answer.data = ''
-
-    my_questions = Quiz.query.order_by(Quiz.id.asc()).all()
-    return render_template("quiz/quiz_adding.htm",
-                           form=form,
-                           added=added,
-                           my_questions=my_questions)
-
-@app.route('/quiz/edytuj/<int:id>', methods=['GET', 'POST'])
-def update_question(id):
-    form = QuizForm()
-    question_to_update = Quiz.query.get_or_404(id)
-    my_questions = Quiz.query.order_by(Quiz.id.asc()).all()
-    edited = None
-    if request.method == "POST":
-        question_to_update.question_text = request.form['question_text']
-        question_to_update.option1 = request.form['option1']
-        question_to_update.option2 = request.form['option2']
-        question_to_update.option3 = request.form['option3']
-        question_to_update.option4 = request.form['option4']
-        question_to_update.correct_answer = request.form['correct_answer']
+    if id == current_user.id or id == 23:
+        name = None
+        deleted = None
+        title = "Usunięto użytkownika."
+        form = UserForm()
+        user_to_delete = Users.query.get_or_404(id)
         try:
+            db.session.delete(user_to_delete)
             db.session.commit()
-            flash("Zmieniono dane.")
-            edited = "tak"
-            return render_template("quiz/quiz_adding.htm",
-                                   form=form,
-                                   my_questions=my_questions,
-                                   edited=edited
-                                   )
+            flash("Usunięto użytkownika")
+            deleted = "tak"
+            our_users = Users.query.order_by(Users.date_added)
+            return render_template("users/back_to_users.htm", title = title)
         except:
             flash("Wystąpił błąd, spróbuj ponownie.")
+            our_users = Users.query.order_by(Users.date_added)
+            return render_template("users/add_user.htm", form=form, name=name, our_users=our_users)
+    else:
+        flash("Tylko administrator i odpowiedni użytkownicy mają dostęp do tych treści.")
+        return render_template('dashboard.htm')
+
+
+@app.route('/quiz/dodaj', methods=['GET', 'POST'])
+@login_required
+def add_question():
+    id_check = current_user.id
+    if id_check == 23:
+        added = None
+        form = QuizForm()
+        if form.validate_on_submit():
+            quiz = Quiz(
+                question_text=form.question_text.data,
+                option1=form.option1.data,
+                option2=form.option2.data,
+                option3=form.option3.data,
+                option4=form.option4.data,
+                correct_answer=form.correct_answer.data
+            )
+            db.session.add(quiz)
+            db.session.commit()
+            flash("Dodano pytanie")
+            added = "tak"
+
+            form.question_text.data = ''
+            form.option1.data = ''
+            form.option2.data = ''
+            form.option3.data = ''
+            form.option4.data = ''
+            form.correct_answer.data = ''
+
+        my_questions = Quiz.query.order_by(Quiz.id.asc()).all()
+        return render_template("quiz/quiz_adding.htm",
+                               form=form,
+                               added=added,
+                               my_questions=my_questions)
+    else:
+        flash("Tylko administrator ma dostęp do tych treści.")
+        return render_template('dashboard.htm')
+
+@app.route('/quiz/edytuj/<int:id>', methods=['GET', 'POST'])
+@login_required
+def update_question(id):
+    id_check = current_user.id
+    if id_check == 23:
+        form = QuizForm()
+        question_to_update = Quiz.query.get_or_404(id)
+        my_questions = Quiz.query.order_by(Quiz.id.asc()).all()
+        edited = None
+        if request.method == "POST":
+            question_to_update.question_text = request.form['question_text']
+            question_to_update.option1 = request.form['option1']
+            question_to_update.option2 = request.form['option2']
+            question_to_update.option3 = request.form['option3']
+            question_to_update.option4 = request.form['option4']
+            question_to_update.correct_answer = request.form['correct_answer']
+            try:
+                db.session.commit()
+                flash("Zmieniono dane.")
+                edited = "tak"
+                return render_template("quiz/quiz_adding.htm",
+                                       form=form,
+                                       my_questions=my_questions,
+                                       edited=edited
+                                       )
+            except:
+                flash("Wystąpił błąd, spróbuj ponownie.")
+                return render_template("quiz/quiz_update.htm",
+                                       form=form,
+                                       question_to_update=question_to_update,
+                                       id=id)
+        else:
             return render_template("quiz/quiz_update.htm",
                                    form=form,
                                    question_to_update=question_to_update,
                                    id=id)
-
     else:
-        return render_template("quiz/quiz_update.htm",
-                               form=form,
-                               question_to_update=question_to_update,
-                               id=id)
-
-# @app.route('/question/<int:id>', methods=['GET', 'POST'])
-# @login_required
-# def question(id):
-#     form = QuestionForm()
-#     q = Quiz.query.filter_by(id=id).first()
-#     message_x = None
-#     message_y = "nie"
-#     if not q:
-#         return redirect(url_for('score'))
-#     form.options.choices = [('1', q.option1), ('2', q.option2), ('3', q.option3), ('4', q.option4)]
-#     if form.validate_on_submit():
-#         message_y = "tak"
-#         option = form.options.data
-#         if option == q.correct_answer:
-#             message_x = "poprawna odpowiedź"
-#             current_score = current_user.quiz_score
-#             current_score += 10
-#             current_user.quiz_score = current_score
-#         else:
-#             message_x = "niepoprawna odpowiedź"+ option + "," + str(q.correct_answer)
-#         return redirect(url_for('question', id=(id+1)))
-#     #form.options.choices = [('1', q.option1), ('2', q.option2), ('3', q.option3), ('4', q.option4)]
-#     return render_template('question.htm', form=form, q=q, title='Question {}'.format(id), message_x=message_x, message_y=message_y)
+        flash("Tylko administrator ma dostęp do tych treści.")
+        return render_template('dashboard.htm')
 
 @app.route('/pytanie/<int:id>', methods=['GET', 'POST'])
 @login_required
 def question(id):
     form = QuestionForm()
     q = Quiz.query.filter_by(id=id).first()
-    #działa?
+    contr = 0
     if id == 1:
+        contr = 1
         if current_user.quiz_score > 0:
+            contr = 2
             return redirect(url_for('score'))
     if not q:
+        contr = 100
         return redirect(url_for('score'))
     if request.method == 'POST':
+        contr = 22
         option = request.form['options']
-        if option == q.correct_answer:
+        if str(option) == str(q.correct_answer):
+            contr = 222
             current_score = current_user.quiz_score
             current_score += 10
             current_user.quiz_score = current_score
@@ -421,10 +400,9 @@ def question(id):
                 db.session.commit()
             except:
                 flash("Wystąpił błąd, spróbuj ponownie.")
-        return redirect(url_for('question', id=(id+1)))
+        return redirect(url_for('question', id=(id+1), contr=contr))
     form.options.choices = [('1', q.option1), ('2', q.option2), ('3', q.option3), ('4', q.option4)]
     return render_template('quiz/question.htm', form=form, q=q, title='Question {}'.format(id))
-
 
 @app.route('/wynik_quizu')
 @login_required
@@ -438,96 +416,74 @@ def quiz_answers():
     my_questions = Quiz.query.order_by(Quiz.id.asc()).all()
     return render_template('quiz/quiz_answers.htm', my_questions=my_questions)
 
-# @app.route('/pytanie/<int:id>', methods=['GET', 'POST'])
-# def question2(id):
-#     message_z = "nic"
-#     current_score = 0
-#     form = Question2Form()
-#     q = Quiz.query.filter_by(id=id).first()
-#     if form.validate_on_submit():
-#         message_z = "przeszło walidację"
-#         q = Quiz.query.filter_by(id=id).first()
-#         if q is None:
-#             return redirect(url_for('score'))
-#         else:
-#             message_z = "doszło do else"
-#             if str(form.user_answer.data) == str(q.correct_answer):
-#                 message_z = "odpowiedź poprawna"
-#                 current_score = current_user.quiz_score
-#                 current_score = current_score+10
-#                 current_user.quiz_score = current_score
-#                 try:
-#                     db.session.commit()
-#                 except:
-#                     flash("Wystąpił błąd, spróbuj ponownie.")
-#             else:
-#                 message_z = "odpowiedź niepoprawna"
-#         form.user_answer.data = ''
-#         return redirect(url_for('question2', id=(id + 1), message_z=message_z, cs = current_score, cus = current_user.quiz_score))
-#
-#
-#     return render_template("question2.htm",
-#         form=form,
-#         q=q, message_z=message_z)
-
 @app.route('/slowa/dodaj', methods=['GET', 'POST'])
 @login_required
 def add_word():
-    added = None
-    form = WordsForm()
-    if form.validate_on_submit():
-        word = Words(
-            word_text=form.word_text.data,
-            characters=form.characters.data,
-            video=form.video.data,
-        )
-        db.session.add(word)
-        db.session.commit()
-        flash("Dodano wyraz")
-        added = "tak"
+    id_check = current_user.id
+    if id_check == 23:
+        added = None
+        form = WordsForm()
+        if form.validate_on_submit():
+            word = Words(
+                word_text=form.word_text.data,
+                characters=form.characters.data,
+                video=form.video.data,
+            )
+            db.session.add(word)
+            db.session.commit()
+            flash("Dodano wyraz")
+            added = "tak"
 
-        form.word_text.data = ''
-        form.characters.data = ''
-        form.video.data = ''
+            form.word_text.data = ''
+            form.characters.data = ''
+            form.video.data = ''
 
-    my_words = Words.query.order_by(Words.id.asc()).all()
-    return render_template("words/words_adding.htm",
-                           form=form,
-                           added=added,
-                           my_words=my_words)
+        my_words = Words.query.order_by(Words.id.asc()).all()
+        return render_template("words/words_adding.htm",
+                               form=form,
+                               added=added,
+                               my_words=my_words)
+    else:
+        flash("Tylko administrator ma dostęp do tych treści.")
+        return render_template('dashboard.htm')
 
 @app.route('/slowa/edytuj/<int:id>', methods=['GET', 'POST'])
 @login_required
 def update_word(id):
-    form = WordsForm()
-    word_to_update = Words.query.get_or_404(id)
-    my_words = Words.query.order_by(Words.id.asc()).all()
-    edited = None
-    if request.method == "POST":
-        word_to_update.word_text = request.form['word_text']
-        word_to_update.characters = request.form['characters']
-        word_to_update.video = request.form['video']
-        try:
-            db.session.commit()
-            flash("Zmieniono dane.")
-            edited = "tak"
-            return render_template("words/words_adding.htm",
-                                   form=form,
-                                   my_words=my_words,
-                                   edited=edited
-                                   )
-        except:
-            flash("Wystąpił błąd, spróbuj ponownie.")
+    id_check = current_user.id
+    if id_check == 23:
+        form = WordsForm()
+        word_to_update = Words.query.get_or_404(id)
+        my_words = Words.query.order_by(Words.id.asc()).all()
+        edited = None
+        if request.method == "POST":
+            word_to_update.word_text = request.form['word_text']
+            word_to_update.characters = request.form['characters']
+            word_to_update.video = request.form['video']
+            try:
+                db.session.commit()
+                flash("Zmieniono dane.")
+                edited = "tak"
+                return render_template("words/words_adding.htm",
+                                       form=form,
+                                       my_words=my_words,
+                                       edited=edited
+                                       )
+            except:
+                flash("Wystąpił błąd, spróbuj ponownie.")
+                return render_template("words/words_update.htm",
+                                       form=form,
+                                       word_to_update=word_to_update,
+                                       id=id)
+
+        else:
             return render_template("words/words_update.htm",
                                    form=form,
                                    word_to_update=word_to_update,
                                    id=id)
-
     else:
-        return render_template("words/words_update.htm",
-                               form=form,
-                               word_to_update=word_to_update,
-                               id=id)
+        flash("Tylko administrator ma dostęp do tych treści.")
+        return render_template('dashboard.htm')
 
 @app.route('/zdjecia/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -616,11 +572,20 @@ def word_videos_start():
         new_id = last_id + 1
     return render_template('words/words_videos_start.htm', new_id=new_id)
 
-
 @app.route('/slowa_koniec', methods=['GET', 'POST'])
 @login_required
 def words_end():
     return render_template('words/words_end.htm')
+
+@app.route('/admin')
+@login_required
+def admin():
+    id = current_user.id
+    if id == 23:
+        return render_template('admin_page.htm')
+    else:
+        flash("Tylko administrator ma dostęp do tych treści.")
+        return render_template('dashboard.htm')
 
 @app.errorhandler(404)
 def page_not_found(e):

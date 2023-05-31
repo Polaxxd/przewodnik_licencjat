@@ -32,6 +32,17 @@
                     <li class="nav-item">
                         <a href="/20_palonek/przewodnik/o_serwisie" class="nav-link active">O serwisie</a>
                     </li>
+                    <li class="nav-item">
+                        {% if current_user.is_authenticated %}
+                            {% if current_user.id == 23 %}
+                                <a href="{{ url_for('admin') }}" class="btn btn-success btn-small">Profil administratora</a>
+                            {% else %}
+                                <a href="{{ url_for('dashboard') }}" class="btn btn-success btn-small">Mój profil</a>
+                            {% endif %}
+                        {% else %}
+                            <a href="{{ url_for('login') }}" class="btn btn-success btn-small">Logowanie</a>
+                        {% endif %}
+                    </li>
                 </ul>
             </div>
         </div>
@@ -46,8 +57,8 @@
                     <h1>O serwisie </h1>
                     <div class="showcase-left">
                     <p class="lead">
-                        Niniejszy serwis stanowi integralną część pracy licencjackiej przygotowanej pod przewodnictwem Jerzego Koniora na kierunku elektroniczne
-                            przetwarzanie informacji.
+                        Niniejszy serwis stanowi integralną część pracy licencjackiej przygotowanej pod kierunkiem prof. dr hab.
+                        Jerzego Koniora na kierunku elektroniczne przetwarzanie informacji.
                     </p>
                     </div>
                 </div>
@@ -60,7 +71,7 @@
     <section class=" p-5 bg-turquoise">
         <div class="container">
             <p class="lead">
-               Niniejszy serwis stanowi integralną część pracy licencjackiej przygotowanej pod przewodnictwem
+               Niniejszy serwis stanowi integralną część pracy licencjackiej przygotowanej pod kierunkiem prof. dr hab.
                 Jerzego Koniora na kierunku elektroniczne przetwarzanie informacji.
             </p>
         </div>

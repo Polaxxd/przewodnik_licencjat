@@ -34,7 +34,11 @@
                     </li>
                     <li class="nav-item">
                         {% if current_user.is_authenticated %}
-                            <a href="{{ url_for('dashboard') }}" class="btn btn-success btn-small">Mój profil</a>
+                            {% if current_user.id == 23 %}
+                                <a href="{{ url_for('admin') }}" class="btn btn-success btn-small">Profil administratora</a>
+                            {% else %}
+                                <a href="{{ url_for('dashboard') }}" class="btn btn-success btn-small">Mój profil</a>
+                            {% endif %}
                         {% else %}
                             <a href="{{ url_for('login') }}" class="btn btn-success btn-small">Logowanie</a>
                         {% endif %}
@@ -85,40 +89,38 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md mx-2 my-3">
-                    <div class="card bg-dark text-light">
-                        <div class="card-body text-center">
-                            <div class="h1 mb-4">
-                                <i class="bi bi-images"></i>
-                            </div>
-                            <h3 class="title">
-                                Dopasuj litery
-                            </h3>
-                            <p class="card-text">
-                                Dopasuj układy dłoni do odpowiadających im liter.
-                            </p>
-                            <a href="/20_palonek/przewodnik/daktylografia" class="btn btn-my_default">Wejdź</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md mx-2 my-3">
-                    <div class="card bg-dark text-light">
-                        <div class="card-body text-center">
-                            <div class="h1 mb-4">
-                                <i class="bi bi-image"></i>
-                            </div>
-                            <h3 class="title">
-                                Obrazki
-                            </h3>
-                            <p class="card-text">
-                                Odczytaj wyraz ułożony z obrazków z układami dłoni.
-                            </p>
-                            <a href="{{ url_for('word_photos', id=1) }}" class="btn btn-my_default">Wejdź</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
+{#                <div class="col-md mx-2 my-3">#}
+{#                    <div class="card bg-dark text-light">#}
+{#                        <div class="card-body text-center">#}
+{#                            <div class="h1 mb-4">#}
+{#                                <i class="bi bi-images"></i>#}
+{#                            </div>#}
+{#                            <h3 class="title">#}
+{#                                Dopasuj litery#}
+{#                            </h3>#}
+{#                            <p class="card-text">#}
+{#                                Dopasuj układy dłoni do odpowiadających im liter.#}
+{#                            </p>#}
+{#                            <a href="/20_palonek/przewodnik/daktylografia" class="btn btn-my_default">Wejdź</a>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="col-md mx-2 my-3">#}
+{#                    <div class="card bg-dark text-light">#}
+{#                        <div class="card-body text-center">#}
+{#                            <div class="h1 mb-4">#}
+{#                                <i class="bi bi-image"></i>#}
+{#                            </div>#}
+{#                            <h3 class="title">#}
+{#                                Obrazki#}
+{#                            </h3>#}
+{#                            <p class="card-text">#}
+{#                                Odczytaj wyraz ułożony z obrazków z układami dłoni.#}
+{#                            </p>#}
+{#                            <a href="{{ url_for('word_photos', id=1) }}" class="btn btn-my_default">Wejdź</a>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
                 <div class="col-md mx-2 my-3">
                     <div class="card bg-dark text-light">
                         <div class="card-body text-center">
@@ -135,6 +137,8 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="row">
                 <div class="col-md mx-2 my-3">
                     <div class="card bg-dark text-light">
                         <div class="card-body text-center">
@@ -161,9 +165,9 @@
                                 Inne
                             </h3>
                             <p class="card-text">
-                                Dodaj swój wyraz / inne alfabety itd.
+                                Zaproponuj nowy wyraz / prześlij nagranie.
                             </p>
-                            <a href="/20_palonek/przewodnik/oserwisie" class="btn btn-my_default">Wejdź</a>
+                            <a href="/20_palonek/przewodnik/other" class="btn btn-my_default">Wejdź</a>
                         </div>
                     </div>
                 </div>

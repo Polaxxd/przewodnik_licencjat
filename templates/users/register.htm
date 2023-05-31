@@ -64,8 +64,8 @@
 
 {% if added %}
 	<h2>Witaj {{ name }}!</h2>
-	<p class="lead">Konto utworzone pomyślnie. Możesz przejść do swojego profilu.</p>
-    <a href="{{ url_for('dashboard') }}" class="btn btn-success btn-small">Mój profil</a>
+	<p class="lead">Konto utworzone pomyślnie. Możesz się zalogować.</p>
+    <a href="{{ url_for('login') }}" class="btn btn-success btn-small">Logowanie</a>
 
 
 {% else %}
