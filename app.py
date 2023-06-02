@@ -130,7 +130,10 @@ def login():
             if check_password_hash(user.password_hash, form.password.data):
                 login_user(user)
                 flash("Zalogowano!")
-                return redirect(url_for('dashboard'))
+                if user.id == 23:
+                    return redirect(url_for('admin'))
+                else:
+                    return redirect(url_for('dashboard'))
             else:
                 flash("Błędne hasło!")
         else:
@@ -151,6 +154,7 @@ def dashboard():
     ps = None
     photo_user_points = 0
     photo_max_points = 0
+    max_score = 0
     video_scores = Scores.query.filter_by(user_id=current_user.id, type="video").order_by(Scores.date_added)
     vs = None
     video_user_points = 0
@@ -166,6 +170,9 @@ def dashboard():
         video_max_points += 1
         if video_score.score == 1:
             video_user_points += 1
+    quiz_questions = Quiz.query.order_by(Quiz.id.asc()).all()
+    for ques in quiz_questions:
+        max_score+=10
     return render_template('dashboard.htm',
                            photo_scores=photo_scores,
                            video_scores = video_scores,
@@ -175,7 +182,8 @@ def dashboard():
                            video_user_points = video_user_points,
                            video_max_points = video_max_points,
                            vs = vs,
-                           ps = ps
+                           ps = ps,
+                           max_score=max_score
                            )
 
 @app.route('/uzytkownik/zarejestruj', methods=['GET', 'POST'])
@@ -228,7 +236,7 @@ def add_user():
             form.name.data = ''
             form.nick.data = ''
             form.password_hash.data = ''
-        our_users = Users.query.order_by(Users.date_added)
+        our_users = Users.query.order_by(Users.date_added.desc())
         return render_template("users/add_user.htm",
                                form=form,
                                name=name,
@@ -244,9 +252,9 @@ def update(id):
     user_to_update = Users.query.get_or_404(id)
     edited = None
     if request.method == "POST":
-        if id == current_user.id or id == 23:
+        if id == current_user.id or current_user.id == 23:
             user = Users.query.filter_by(nick=form.nick.data).first()
-            if user.nick == form.nick.data:
+            if user_to_update.nick == form.nick.data:
                 user=None
             if user is None:
                 user_to_update.name = request.form['name']
@@ -259,13 +267,15 @@ def update(id):
                     return render_template("users/back_to_users.htm", title = title)
                 except:
                     flash("Wystąpił błąd, spróbuj ponownie.")
-                    return render_template("users/update.htm",
-                                           form=form,
-                                           user_to_update=user_to_update)
             else:
                 flash("Użytkownik o tym nicku już istnieje. Wybierz inną nazwę użytkownika.")
         else:
             flash("Użytkownicy mogą zmieniać tylko swoje dane!")
+
+        return render_template("users/update.htm",
+                               form=form,
+                               user_to_update=user_to_update,
+                               id=id)
     else:
         return render_template("users/update.htm",
                                form=form,
@@ -275,23 +285,28 @@ def update(id):
 @app.route('/uzytkownik/usun/<int:id>')
 @login_required
 def delete(id):
-    if id == current_user.id or id == 23:
+    if id == current_user.id or current_user.id == 23:
         name = None
         deleted = None
         title = "Usunięto użytkownika."
         form = UserForm()
         user_to_delete = Users.query.get_or_404(id)
+        user_scoers = Scores.query.filter_by(user_id=id)
+        for sc in user_scoers:
+            try:
+                db.session.delete(sc)
+                db.session.commit()
+            except:
+                flash("Wystąpił błąd przy usuwaniu wyniku, spróbuj ponownie.")
         try:
             db.session.delete(user_to_delete)
             db.session.commit()
             flash("Usunięto użytkownika")
             deleted = "tak"
-            our_users = Users.query.order_by(Users.date_added)
             return render_template("users/back_to_users.htm", title = title)
         except:
             flash("Wystąpił błąd, spróbuj ponownie.")
-            our_users = Users.query.order_by(Users.date_added)
-            return render_template("users/add_user.htm", form=form, name=name, our_users=our_users)
+            return render_template("home.htm")
     else:
         flash("Tylko administrator i odpowiedni użytkownicy mają dostęp do tych treści.")
         return render_template('dashboard.htm')
@@ -317,13 +332,11 @@ def add_question():
             db.session.commit()
             flash("Dodano pytanie")
             added = "tak"
-
-            form.question_text.data = ''
-            form.option1.data = ''
-            form.option2.data = ''
-            form.option3.data = ''
-            form.option4.data = ''
-            form.correct_answer.data = ''
+        form.option1.data = ''
+        form.option2.data = ''
+        form.option3.data = ''
+        form.option4.data = ''
+        form.correct_answer.data = ''
 
         my_questions = Quiz.query.order_by(Quiz.id.asc()).all()
         return render_template("quiz/quiz_adding.htm",
@@ -496,7 +509,8 @@ def word_photos(id):
         chars = w.characters
         chars_list = chars.split(" ")
     if request.method == 'POST':
-        if str(form.user_answer.data) == str(w.word_text):
+        user_answer = str(form.user_answer.data).lower().strip()
+        if user_answer == str(w.word_text):
             score1=Scores(
                 word_id = id,
                 user_id = current_user.id,
@@ -540,7 +554,8 @@ def word_videos(id):
     else:
         video_file = w.video
     if request.method == 'POST':
-        if str(form.user_answer.data) == str(w.word_text):
+        user_answer = str(form.user_answer.data).lower().strip()
+        if user_answer == str(w.word_text):
             score1=Scores(
                 word_id = id,
                 user_id = current_user.id,
@@ -549,6 +564,7 @@ def word_videos(id):
             )
             db.session.add(score1)
             db.session.commit()
+            flash("Poprawnie!")
         else:
             score1 = Scores(
                 word_id=id,
@@ -558,6 +574,7 @@ def word_videos(id):
             )
             db.session.add(score1)
             db.session.commit()
+            flash("Niepoprawnie.")
         return redirect(url_for('word_videos', id=(id + 1)))
     return render_template('words/word_video.htm', form=form, w=w, video_file=video_file)
 

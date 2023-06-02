@@ -52,14 +52,15 @@
                                 <p class="card-text">
                                     <strong>Imię: </strong>{{ current_user.name }}<br>
                                     <strong>Nick: </strong>{{ current_user.nick }}<br>
-                                    <strong>Data dołączenia: </strong>{{ current_user.date_added }}<br>
+                                    <strong>Data dołączenia: </strong>{{ current_user.date_added.strftime("%d-%m-%Y") }}<br>
                                 </p>
                             </div>
                         </div>
                         <br>
                         <a href="{{ url_for('logout') }}" class="btn btn-secondary mx-2">Wyloguj</a>
                         <a href="{{ url_for('update', id=current_user.id) }}" class="btn btn-warning mx-2"> Edytuj</a>
-                        <a href="{{ url_for('delete', id=current_user.id) }}" class="btn btn-danger mx-2"> Usuń</a>
+                        <a href="{{ url_for('delete', id=current_user.id) }}" class="btn btn-danger mx-2" onclick="return confirmDelete();">Usuń</a>
+
                     </div>
                 </div>
                 <img id="motyl" class="img-fluid w-25" src="/20_palonek/przewodnik/static/images/motyl.png" alt="Logo motyla w kolorach białym i turkusowym">
@@ -80,10 +81,10 @@
             <!-- quiz -->
         <h3 class="mt-5">Wyniki "Quiz":</h3>
 	        <br/>
-        {% if current_user.score == 0 %}
+        {% if current_user.quiz_score == 0 %}
              <p class="lead">Nie masz jeszcze wyników w tej kategorii. <a href="{{ url_for('question', id=1) }}" class="btn btn-my_default">Zagraj</a></p>
         {% else %}
-           <strong>Wynik: </strong> {{ current_user.quiz_score }}/50
+           <strong>Wynik: </strong> {{ current_user.quiz_score }}/{{ max_score }}
         {% endif %}
         <br><hr>
 
@@ -169,7 +170,11 @@
         </div>
     </footer>
 
-
+    <script>
+        function confirmDelete() {
+            return confirm('Czy na pewno chcesz usunąć konto? Tej operacji nie można cofnąć.');
+        }
+    </script>
     <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>

@@ -49,25 +49,20 @@
     </nav>
 
     <!-- nagłówek -->
-        <!-- p-5 - padding (wartości 1-5); może być pt - padding top, pb, px (po prawej i lewej), py -->
-    <section class="bg-dark text-light p-5 text-center">
+    <section class="bg-dark text-light p-5 text-center text-sm-start">
         <div class="container">
             <div class="d-sm-flex">
                 <div class="mx-4">
-                    <h1>Przewodnik po świecie <span class="text-turquoise">ciszy</span> </h1>
+                    <h1>Odczytaj wyraz - zdjęcia</h1>
                     <div class="showcase-left">
-                    <figure class="text-center">
-                        <blockquote class="blockquote fst-italic">
-                            <p>Zacząłem zdawać sobie sprawę, że&nbsp;wiele osób nie&nbsp;ma świadomości istnienia kultury Głuchych,
-                                a&nbsp;ja&nbsp;dostałem świetne narzędzie do&nbsp;zmiany postrzegania społeczności niesłyszących.</p>
-                        </blockquote>
-                        <figcaption class="blockquote-footer">
-                            Nyle DiMarco [x]
-                        </figcaption>
-                    </figure>
+                    <p class="lead">
+                        Ta gra pozwoli utrwalić litery alfabetu palcowego poprzez ćwiczenia polegające na odczytywaniu wyrazów ułożonych
+                        z obrazków.
+                    </p>
                     </div>
                 </div>
                 <img id="motyl" class="img-fluid w-25" src="/20_palonek/przewodnik/static/images/motyl.png" alt="Logo motyla w kolorach białym i turkusowym">
+
             </div>
         </div>
     </section>
@@ -78,8 +73,10 @@
             <div class="mt-5 align-items-lg-center mx-5">
                 <h2 class="score-head mt-5">Instrukcja</h2>
                 <p class="lead">
-                    Rozpoznaj litery przedstawione za pomocą układów dłoni, odczytaj wyraz i wpisz go w polu poniżej.
-                    Wpisz tylko jeden wyraz, nie używaj wielkich liter, spacji ani znaków interpunkcyjnych.
+                    Rozpoznaj litery przedstawione za pomocą układów dłoni, odczytaj wyraz i wpisz go w polu poniżej.<br>
+                    Wpisz tylko jeden wyraz, nie używaj wielkich liter, spacji ani znaków interpunkcyjnych.<br>
+                    Możesz przerwać grę w dowolnym momencie przechodząc do innej zakładki. Gra zostanie wznowiona
+                    od wyrazu, na którym skończysz.
                 </p>
                 <p class="lead">Jeśli nie znasz jeszcze liter alfabetu palcowego,
                     zajrzyj tu: <a href="{{ url_for('daktylografia_teoria') }}" class="btn btn-turquoise">daktylografia > teoria</a></p>

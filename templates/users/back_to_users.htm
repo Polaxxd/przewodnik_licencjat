@@ -56,7 +56,13 @@
     <!-- podstrony -->
     <section class=" p-5 bg-turquoise text-light text-center">
         <div class="container">
-            <p class="lead"><a href="{{ url_for('dashboard')}}">Wróć do swojego profilu</a></p>
+            {% for message in get_flashed_messages() %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+            <p class="lead"><a href="{{ url_for('home')}}">Wróć na stronę główną</a></p>
         </div>
     </section>
 

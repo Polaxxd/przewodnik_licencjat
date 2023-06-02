@@ -74,25 +74,10 @@
             {% endfor %}
 
 {% if added %}
-	<h1>Dodano wyraz!</h1>
-	<br/><br/>
-<table class="table table-hover table-bordered table-striped">
-
-{% for my_word in my_words %}
-	<tr>
-	<td>
-        {{ my_word.id }}. {{ my_word.word_text }}
-    </td>
-    <td>
-        <a href="{{ url_for('update_word', id=my_word.id) }}" class="btn btn-warning"> Edytuj</a>
-    </td>
-	</tr>
-{% endfor %}
-
-</table>
-
-{% else %}
+	<h2>Dodano wyraz!</h2>
+{% endif %}
 <div class="shadow p-3 mb-5 bg-body rounded">
+    <h3>Dodaj nowy wyraz</h3>
 	<form method="POST">
 		{{ form.hidden_tag() }}
 		{{ form.word_text.label(class="form-label") }}
@@ -114,8 +99,10 @@
 
 {% for my_word in my_words %}
 	<tr>
-	<td>{{ my_word.id }}. {{ my_word.word_text }}
-    </td>
+        <td>{{ my_word.id }}</td>
+        <td>{{ my_word.word_text }}</td>
+        <td>{{ my_word.characters }}</td>
+        <td>{{ my_word.video }}</td>
     <td>
         <a href="{{ url_for('update_word', id=my_word.id) }}" class="btn btn-warning"> Edytuj</a>
     </td>
@@ -123,7 +110,7 @@
 {% endfor %}
 
 </table>
-{% endif %}
+
 
         </div>
     </section>
