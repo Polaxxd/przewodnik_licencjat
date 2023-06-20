@@ -8,7 +8,7 @@ from wtforms.validators import DataRequired, EqualTo, Length
 class UserForm(FlaskForm):
     name = StringField("Imię", validators=[DataRequired()])
     nick = StringField("Nick", validators=[DataRequired()])
-    password_hash = PasswordField('Hasło', validators=[DataRequired(), EqualTo('password_hash2', message="Hasła muszą być takie same!")])
+    password_hash = PasswordField('Hasło', validators=[DataRequired(), EqualTo('password_hash2', message='Hasła muszą być takie same!')])
     password_hash2 = PasswordField('Powtórz hasło', validators=[DataRequired()])
     submit = SubmitField("Zapisz")
 

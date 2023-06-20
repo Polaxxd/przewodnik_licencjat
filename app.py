@@ -421,7 +421,11 @@ def question(id):
 @login_required
 def score():
     final_score = current_user.quiz_score
-    return render_template('quiz/score.htm', title='Final Score', score=final_score)
+    max_score = 0
+    quiz_questions = Quiz.query.order_by(Quiz.id.asc()).all()
+    for ques in quiz_questions:
+        max_score+=10
+    return render_template('quiz/score.htm', title='Final Score', score=final_score, max_score=max_score)
 
 @app.route('/quiz/odpowiedzi')
 @login_required

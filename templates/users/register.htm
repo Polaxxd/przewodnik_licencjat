@@ -80,11 +80,19 @@
 		{{ form.nick(class="form-control") }}
 		<br/>
         {{ form.password_hash.label(class="form-label") }}
-		{{ form.password_hash(class="form-control") }}
-		<br/>
+        {{ form.password_hash(class="form-control") }}
+        {% if form.password_hash.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.password_hash.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <br/>
         {{ form.password_hash2.label(class="form-label") }}
-		{{ form.password_hash2(class="form-control") }}
-		<br/>
+        {{ form.password_hash2(class="form-control") }}
+        <br/>
+
 		{{ form.submit(class="btn btn-success") }}
 	</form>
 </div>

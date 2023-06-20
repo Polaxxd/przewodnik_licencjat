@@ -38,6 +38,7 @@
                                 <a href="{{ url_for('admin') }}" class="btn btn-success btn-small">Profil administratora</a>
                             {% else %}
                                 <a href="{{ url_for('dashboard') }}" class="btn btn-success btn-small">Mój profil</a>
+                                <a href="{{ url_for('logout') }}" class="btn btn-secondary mx-2">Wyloguj</a>
                             {% endif %}
                         {% else %}
                             <a href="{{ url_for('login') }}" class="btn btn-success btn-small">Logowanie</a>
@@ -74,7 +75,7 @@
             <h3> Co to jest daktylografia?</h3>
                 <p class="lead">
                     Daktylografia lub inaczej mowa palcowa to forma porozumiewania się oparta na określonych układach dłoni.
-                    Każdej literze odpowiada określony znak daktylograficzny.
+                    Każdej literze odpowiada określony znak daktylograficzny<a href="https://limba.wzks.uj.edu.pl/20_palonek/przewodnik/o_serwisie#daktylografia">[4]</a>.
                 </p>
             <h3> Kiedy używa się alfabetu palcowego?</h3>
                 <p class="lead pb-0 mb-0">

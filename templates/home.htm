@@ -10,6 +10,16 @@
     <link rel="stylesheet" href="/20_palonek/przewodnik//static/style.css">
     <link rel="shortcut icon" href="/20_palonek/przewodnik/static/images/motyl.png">
     <title>Przewodnik po świecie ciszy</title>
+    <style>
+    .video-container {
+        display: flex;
+        justify-content: center;
+    }
+
+    .video-container iframe {
+        max-width: 100%;
+    }
+</style>
 </head>
 <body>
     <!-- nawigacja -->
@@ -38,6 +48,7 @@
                                 <a href="{{ url_for('admin') }}" class="btn btn-success btn-small">Profil administratora</a>
                             {% else %}
                                 <a href="{{ url_for('dashboard') }}" class="btn btn-success btn-small">Mój profil</a>
+                                <a href="{{ url_for('logout') }}" class="btn btn-secondary mx-2">Wyloguj</a>
                             {% endif %}
                         {% else %}
                             <a href="{{ url_for('login') }}" class="btn btn-success btn-small">Logowanie</a>
@@ -62,7 +73,7 @@
                                 a&nbsp;ja&nbsp;dostałem świetne narzędzie do&nbsp;zmiany postrzegania społeczności niesłyszących.</p>
                         </blockquote>
                         <figcaption class="blockquote-footer text-light">
-                            Nyle DiMarco [x]
+                            Nyle DiMarco
                         </figcaption>
                     </figure>
                     </div>
@@ -127,6 +138,20 @@
             </div>
         </div>
     </section>
+    <section class="bg-white">
+    <div class="container m-5">
+        <h2 class="mb-3">Jak korzystać z serwisu?</h2>
+        <div class="video-container">
+            <iframe width="800" height="450" src="https://www.youtube.com/embed/bIWoFQMIwF4"
+                    title="YouTube video player" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen></iframe>
+        </div>
+    </div>
+</section>
+
+
+
 
     <!-- footer -->
     <footer class="p-2 bg-white text-center text-dark position-relative">

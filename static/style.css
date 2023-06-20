@@ -1,3 +1,7 @@
+body {
+overflow-x: hidden;
+}
+
 .navbar-brand{
   font-size: 25px !important;
 }

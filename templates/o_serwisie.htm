@@ -38,6 +38,7 @@
                                 <a href="{{ url_for('admin') }}" class="btn btn-success btn-small">Profil administratora</a>
                             {% else %}
                                 <a href="{{ url_for('dashboard') }}" class="btn btn-success btn-small">Mój profil</a>
+                                <a href="{{ url_for('logout') }}" class="btn btn-secondary mx-2">Wyloguj</a>
                             {% endif %}
                         {% else %}
                             <a href="{{ url_for('login') }}" class="btn btn-success btn-small">Logowanie</a>
@@ -69,15 +70,9 @@
 
     <!-- podstrony -->
     <section class=" p-5 bg-turquoise">
-        <div class="container">
-            <p class="lead">
-               Niniejszy serwis stanowi integralną część pracy licencjackiej przygotowanej pod kierunkiem prof. dr. hab.
-                Jerzego Koniora na kierunku elektroniczne przetwarzanie informacji.
-            </p>
-        </div>
 
         <div class="container">
-           <h2>Bibliogrfia</h2>
+           <h2>Bibliografia</h2>
                <ol>
                   <li id="pietno">
                      <p>Z. Teper-Solarz, <cite>Piętno - przekleństwo czy dobrodziejstwo Głuchych?</cite>, w: D. Stanosz (red.),
@@ -87,28 +82,32 @@
                      <p>A. Goc, <cite>Głusza</cite>, Warszawa 2022</p>
                   </li>
                    <li id="savior-vivre">
-                     <p>A. Butkiewicz, B. Cholewa, <cite>Savoir-vivre u Głuchych</cite>, https://kulturawrazliwa.pl/wiedza/savoir-vivre-u-gluchych/
+                     <p>A. Butkiewicz, B. Cholewa, <cite>Savoir-vivre u Głuchych</cite>, <a href="https://kulturawrazliwa.pl/wiedza/savoir-vivre-u-gluchych/">https://kulturawrazliwa.pl/wiedza/savoir-vivre-u-gluchych/</a>
                      (dostęp: 01.06.2023)</p>
                   </li>
                    <li id="datktylografia">
-                     <p>B. Pawlak, <cite>Alfabet języka migowego</cite>, http://basiapawlak.blogspot.com/2012/07/alfabet-jezyka-migowego.html
+                     <p>B. Pawlak, <cite>Alfabet języka migowego</cite>, <a href="http://basiapawlak.blogspot.com/2012/07/alfabet-jezyka-migowego.html">http://basiapawlak.blogspot.com/2012/07/alfabet-jezyka-migowego.html</a>
                      (dostęp: 01.06.2023)</p>
                   </li>
-                   <li id="datktylografia">
-                     <p>B. Pawlak, <cite>Alfabet języka migowego</cite>, http://basiapawlak.blogspot.com/2012/07/alfabet-jezyka-migowego.html
+                   <li id="gallaudet">
+                     <p><cite>Sytuacja i możliwości aktywizacji Głuchych</cite>, <a href="http://dobrekadry.pl/wp-content/uploads/2019/01/Sytuacja_i_mozliwosci_aktywizacji_Gluchych.pdf">http://dobrekadry.pl/wp-content/uploads/2019/01/Sytuacja_i_mozliwosci_aktywizacji_Gluchych.pdf</a>
                      (dostęp: 01.06.2023)</p>
                   </li>
-                   <li id="datktylografia">
-                     <p>B. Pawlak, <cite>Alfabet języka migowego</cite>, http://basiapawlak.blogspot.com/2012/07/alfabet-jezyka-migowego.html
+                   <li id="pzg_opole">
+                       <p>Strona opolskiego PZG, <a href="https://www.pzgopole.pl/index.php/jezyk-migowy/pjm/9-jezyk-migowy">https://www.pzgopole.pl/index.php/jezyk-migowy/pjm/9-jezyk-migowy</a>
                      (dostęp: 01.06.2023)</p>
                   </li>
-                   <li id="datktylografia">
-                     <p>B. Pawlak, <cite>Alfabet języka migowego</cite>, http://basiapawlak.blogspot.com/2012/07/alfabet-jezyka-migowego.html
+                   <li id="ciekawostki">
+                     <p>D. Kopańska, <cite>Normalne dla g/Głuchych, ciekawostki dla osób słyszących</cite>, <a
+                             href="http://www.niepelnosprawni.pl/ledge/x/1998683;jsessionid=85F7629E9C41CA29BD97D056AA417D13">http://www.niepelnosprawni.pl/</a>
                      (dostęp: 01.06.2023)</p>
                   </li>
-                   <li id="datktylografia">
-                     <p>B. Pawlak, <cite>Alfabet języka migowego</cite>, http://basiapawlak.blogspot.com/2012/07/alfabet-jezyka-migowego.html
+                   <li id="podrecznik">
+                     <p>J. Józefiak i inni, <cite>Podręcznik PI zapisać ciszę</cite>, <a href="http://www.unitis.pl/images/pliki/SignWriting/SignWritingpodrecznik.pdf">http://www.unitis.pl/images/pliki/SignWriting/SignWritingpodrecznik.pdf</a>
                      (dostęp: 01.06.2023)</p>
+                  </li>
+                   <li id="notatki">
+                       <p>Notatki z kursu polskiego języka migowego na poziomie A1 organizowanego przez fundację <em>Migawki</em>, Kraków 2022.</p>
                   </li>
 
                </ol>

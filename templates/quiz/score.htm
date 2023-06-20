@@ -38,10 +38,12 @@
                                 <a href="{{ url_for('admin') }}" class="btn btn-success btn-small">Profil administratora</a>
                             {% else %}
                                 <a href="{{ url_for('dashboard') }}" class="btn btn-success btn-small">Mój profil</a>
+                                <a href="{{ url_for('logout') }}" class="btn btn-secondary mx-2">Wyloguj</a>
                             {% endif %}
                         {% else %}
                             <a href="{{ url_for('login') }}" class="btn btn-success btn-small">Logowanie</a>
                         {% endif %}
+                    </li>
                     </li>
                 </ul>
             </div>
@@ -78,9 +80,13 @@
             <div class="mt-5 align-items-lg-center mx-5">
                 <h2 class="score-head mt-5">Twój wynik</h2>
                 <div class="bg-white border border-success rounded mx-5">
-                    <h1 class="mx-5">{{ score }}</h1>
+                    <h1 class="mx-5">{{ score }}/{{ max_score }}</h1>
                 </div>
+                {% if score == 0 %}
+                <h2>Spróbuj rozwiązać quiz jeszcze raz.</h2>
+                {% else %}
                 <h2 class="congrats-cls">Gratulacje!</h2>
+                {% endif %}
                 <div class="m-4">
                     <a href="{{ url_for('home') }}" class="btn btn-turquoise">Strona główna</a>
                     <a href="{{ url_for('quiz_answers') }}" class="btn btn-turquoise">Zobacz poprawne odpowiedzi</a>

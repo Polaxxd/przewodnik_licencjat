@@ -57,10 +57,17 @@
     <section class=" p-5 bg-turquoise">
         <div class="container">
             {% for message in get_flashed_messages() %}
+                {% if message == "Please log in to access this page." %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    Zaloguj się, żeby wyświetlić tę stronę.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% else %}
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     {{ message }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
+                {% endif %}
             {% endfor %}
             <div class="row">
                 <div class="col-md-6 p-2">

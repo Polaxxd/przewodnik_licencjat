@@ -38,6 +38,7 @@
                                 <a href="{{ url_for('admin') }}" class="btn btn-success btn-small">Profil administratora</a>
                             {% else %}
                                 <a href="{{ url_for('dashboard') }}" class="btn btn-success btn-small">Mój profil</a>
+                                <a href="{{ url_for('logout') }}" class="btn btn-secondary mx-2">Wyloguj</a>
                             {% endif %}
                         {% else %}
                             <a href="{{ url_for('login') }}" class="btn btn-success btn-small">Logowanie</a>
@@ -76,10 +77,17 @@
     <section class=" p-5 bg-turquoise">
         <div class="container">
         {% for message in get_flashed_messages() %}
+                {% if message == "Niepoprawnie." %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% else %}
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     {{ message }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
+                {% endif %}
             {% endfor %}
             <div class="shadow p-3 mb-5 bg-body rounded">
                 <div class="word_photo">
