@@ -533,7 +533,7 @@ def word_photos(id):
             )
             db.session.add(score1)
             db.session.commit()
-            flash("Niepoprawnie.")
+            flash("Niepoprawnie. Poprawna odpowiedź to: "+ str(w.word_text) +". Twoja odpowiedź: "+ user_answer + ".")
         return redirect(url_for('word_photos', id=(id + 1)))
     return render_template('words/word_photo.htm', form=form, w=w, chars_list=chars_list)
 
@@ -578,7 +578,7 @@ def word_videos(id):
             )
             db.session.add(score1)
             db.session.commit()
-            flash("Niepoprawnie.")
+            flash("Niepoprawnie. Poprawna odpowiedź to: "+ str(w.word_text) +". Twoja odpowiedź: "+ user_answer + ".")
         return redirect(url_for('word_videos', id=(id + 1)))
     return render_template('words/word_video.htm', form=form, w=w, video_file=video_file)
 
