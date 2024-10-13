@@ -1,4 +1,4 @@
-[🇬🇧 English wersion below]
+[🇬🇧 English version below]
 # Przewodnik po świecie ciszy
 Serwis internetowy "Przewodnik po świecie ciszy", stanowiący integralną część pracy licencjackiej (2023).
 Przewodnik stanowi skarbnicę podstawowej wiedzy o języku i kulturze osób Głuchych w Polsce. 
